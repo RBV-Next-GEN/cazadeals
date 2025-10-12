@@ -1,0 +1,33 @@
+// ...importaciones...
+import { GoogleLogin } from '@react-oauth/google';
+import jwtDecode from 'jwt-decode';
+
+function TuComponenteDeLogin() {
+
+  const handleSuccess = (credentialResponse) => {
+    // --- INICIO: CÓDIGO PARA DEPURAR ---
+    console.log("Respuesta de Google recibida:", credentialResponse);
+    // --- FIN: CÓDIGO PARA DEPURAR ---
+
+    const userObject = jwtDecode(credentialResponse.credential);
+
+    // --- INICIO: CÓDIGO PARA DEPURAR ---
+    console.log("Usuario decodificado:", userObject);
+    // --- FIN: CÓDIGO PARA DEPURAR ---
+
+    // Aquí tienes tu lógica para guardar el usuario, etc.
+    localStorage.setItem('user', JSON.stringify(userObject));
+    // ...
+  };
+
+  const handleError = () => {
+    console.log('Login Failed');
+  };
+
+  return (
+    <GoogleLogin
+      onSuccess={handleSuccess}
+      onError={handleError}
+    />
+  );
+}
