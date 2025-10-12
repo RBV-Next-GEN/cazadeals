@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useGoogleLogin, googleLogout } from '@react-oauth/google'; // Importa useGoogleLogin
-import { jwtDecode } from 'jwt-decode'; // Importa jwtDecode correctamente
+import jwtDecode from 'jwt-decode';
 import { UserCircleIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'; // Importa los iconos
 
 import UserProfile from './components/UserProfile'; // Importa el nuevo componente de perfil
