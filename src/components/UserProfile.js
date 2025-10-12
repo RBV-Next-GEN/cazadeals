@@ -1,21 +1,30 @@
 import React, { useEffect } from 'react'; // Importa useEffect para el log
 import { motion } from 'framer-motion';
-import { UserCircleIcon, BookmarkIcon, ShareIcon, BellIcon, ClockIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, BookmarkIcon, ShareIcon, BellIcon, ClockIcon, ArrowRightOnRectangleIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../components/GoogleAuthWrapper'; // Importa el hook de autenticación
+import { useNavigate, Link } from 'react-router-dom'; // Para volver atrás
 
-const UserProfile = ({ user, onLogout }) => {
+const UserProfile = () => {
+  const { user, handleLogout } = useAuth();
+  const navigate = useNavigate();
+
   // Añade este useEffect para depurar el objeto 'user'
   useEffect(() => {
     console.log("UserProfile recibió la prop 'user':", user);
   }, [user]);
 
   if (!user) {
+    // Si no hay usuario logueado, redirige o muestra un mensaje
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Acceso Denegado</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">Por favor, inicia sesión para ver tu perfil.</p>
-          <a href="/" className="bg-red-500 text-white py-2 px-6 rounded-full hover:bg-red-600 transition-colors">Ir a Inicio</a>
-        </div>
+      <div className="container mx-auto px-4 py-8 text-center dark:text-gray-200">
+        <h2 className="text-3xl font-bold mb-4">No has iniciado sesión</h2>
+        <p className="mb-4">Por favor, inicia sesión para ver tu perfil.</p>
+        <button
+          onClick={() => navigate('/')}
+          className="bg-orange-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors"
+        >
+          Volver al inicio
+        </button>
       </div>
     );
   }
@@ -31,6 +40,15 @@ const UserProfile = ({ user, onLogout }) => {
       className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 p-4 sm:p-8"
     >
       <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 sm:p-8">
+        {/* Enlace para volver atrás */}
+        <Link
+          to="/" // Puedes cambiar esto a navigate(-1) si quieres volver a la página anterior
+          className="flex items-center text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors mb-6"
+        >
+          <ArrowLeftIcon className="h-5 w-5 mr-2" />
+          <span className="font-semibold">Volver al inicio</span>
+        </Link>
+
         <div className="flex items-center justify-between mb-8 border-b pb-4 border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-4">
             {user.picture ? ( // Si user.picture existe, usa la imagen de Google
@@ -44,7 +62,7 @@ const UserProfile = ({ user, onLogout }) => {
             </div>
           </div>
           <button
-            onClick={onLogout}
+            onClick={handleLogout}
             className="flex items-center space-x-2 bg-red-500 text-white px-4 py-2 rounded-full font-semibold hover:bg-red-600 transition-colors"
           >
             <ArrowRightOnRectangleIcon className="w-5 h-5" />
@@ -136,7 +154,6 @@ const UserProfile = ({ user, onLogout }) => {
             Más información (próximamente)
           </button>
         </motion.div>
-
       </div>
     </motion.div>
   );
