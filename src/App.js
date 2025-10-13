@@ -1,50 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { collection, onSnapshot } from 'firebase/firestore'; // Importa las funciones de Firestore
+import { db } from './firebase'; // Importa la configuración de la base de datos
 import Header from './components/Header';
-import DealList from './components/DealList';
-import PromoCodeList from './components/PromoCodeList';
 import Footer from './components/Footer';
-import LaunchOfferBanner from './components/LaunchOfferBanner';
 import { ThemeProvider } from './context/theme';
-
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import GoogleAuthWrapper, { useAuth } from './components/GoogleAuthWrapper';
 import UserProfile from './components/UserProfile';
 import DealModal from './components/DealModal';
-import MarqueeDeals from './components/MarqueeDeals';
 import CategoryNav from './components/CategoryNav';
+import StoresPage from './components/StoresPage';
+import BrandPage from './components/BrandPage';
+import HomePage from './pages/HomePage';
 
-const ALL_DEALS_DATA = [
-  { id: 1, store: 'Amazon', discount: '20% off', expires: '2025-10-20', code: 'SAVE20', category: 'Tech', isNew: true, description: 'Ahorra en una amplia selección de productos electrónicos y más.' },
-  { id: 2, store: 'Nike', discount: '15% off shoes', expires: '2025-10-15', code: 'NIKE15', category: 'Moda', description: 'Descuento en calzado deportivo y ropa de moda.' },
-  { id: 3, store: 'Starbucks', discount: '10% off', expires: '2025-10-18', code: 'STARBUCKS10', category: 'Comida', isNew: true, description: 'Disfruta de tu café favorito con un 10% de descuento.' },
-  { id: 4, store: 'Zara', discount: '25% off', expires: '2025-11-01', code: 'ZARA25', category: 'Moda', description: 'Renueva tu armario con las últimas tendencias.' },
-  { id: 5, store: 'GameStop', discount: '10% off games', expires: '2025-10-25', code: 'GAMINGPRO', category: 'Gaming', description: 'Ofertas en videojuegos y accesorios para tu consola.' },
-  { id: 6, store: 'Fnac', discount: '10% off books', expires: '2025-11-10', code: 'BOOKWORM', category: 'Libros', description: 'Descuentos en una gran variedad de libros y ebooks.' },
-  { id: 7, store: 'MediaMarkt', discount: '10% off electronics', expires: '2025-11-20', code: 'ELECTRONICS10', category: 'Tech', description: 'Grandes ofertas en televisores, móviles y electrodomésticos.' },
-  { id: 8, store: 'Glovo', discount: '5€ off delivery', expires: '2025-10-30', code: 'FOODIES', category: 'Comida', description: 'Pide tu comida a domicilio con un descuento especial.' },
-  { id: 9, store: 'Booking.com', discount: '10% off hotels', expires: '2025-12-31', code: 'TRAVELNOW', category: 'Viajes', description: 'Encuentra los mejores precios en hoteles y alojamientos.' },
-];
-
-const MARQUEE_PROMOTIONS_DATA = [
-  { id: 'm1', text: '¡20% en Amazon!', referralLink: 'https://www.amazon.es/ofertas' },
-  { id: 'm2', text: 'Nike: 15% en zapatillas', referralLink: 'https://www.nike.com/es/ofertas' },
-  { id: 'm3', text: 'Starbucks: 10% en tu pedido', referralLink: 'https://www.starbucks.es/promociones' },
-  { id: 'm4', text: 'Zara: 25% en nueva colección', referralLink: 'https://www.zara.com/es/ofertas' },
-  { id: 'm5', text: 'GameStop: 10% en juegos', referralLink: 'https://www.gamestop.es/ofertas' },
-  { id: 'm6', text: 'Fnac: 10% en libros', referralLink: 'https://www.fnac.es/ofertas' },
-  { id: 'm7', text: 'MediaMarkt: 10% en electrónica', referralLink: 'https://www.mediamarkt.es/ofertas' },
-  { id: 'm8', text: 'Glovo: 5€ en tu primer pedido', referralLink: 'https://www.glovoapp.com/es/promociones' },
-  { id: 'm9', text: 'Booking.com: 10% en hoteles', referralLink: 'https://www.booking.com/deals' },
-];
-
+// La variable ALL_DEALS_DATA ha sido eliminada. ¡Ahora los datos vendrán de Firebase!
 
 function App() {
   return (
     <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
       <ThemeProvider>
-        <Router>
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <GoogleAuthWrapper>
             <AppContent />
           </GoogleAuthWrapper>
@@ -58,16 +35,31 @@ const AppContent = () => {
   const { user, login, handleLogout } = useAuth();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [deals, setDeals] = useState([]);
+  const [deals, setDeals] = useState([]); // El estado inicial ahora es un array vacío
   const [selectedCategory, setSelectedCategory] = useState('Todos');
   const [copiedDealId, setCopiedDealId] = useState(null);
   const [selectedDeal, setSelectedDeal] = useState(null);
 
+  // --- ¡Magia de Firebase aquí! ---
   useEffect(() => {
-    setDeals(ALL_DEALS_DATA);
-  }, []);
+    // Crea una referencia a la colección 'deals' en tu base de datos Firestore
+    const dealsCollectionRef = collection(db, 'deals');
 
-  const uniqueCategories = ['Todos', ...new Set(ALL_DEALS_DATA.map(deal => deal.category))];
+    // Escucha los cambios en la colección en tiempo real
+    const unsubscribe = onSnapshot(dealsCollectionRef, (snapshot) => {
+      const dealsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setDeals(dealsData); // Actualiza el estado con los datos de Firebase
+    });
+
+    // Limpia el listener cuando el componente se desmonta para evitar fugas de memoria
+    return () => unsubscribe();
+  }, []); // Se ejecuta solo una vez, cuando el componente se monta
+
+  // Las categorías, tiendas y ofertas de la marquesina ahora se derivan dinámicamente
+  // del estado 'deals', que es alimentado por Firebase.
+  const uniqueCategories = ['Todos', ...new Set(deals.map(deal => deal.category)), 'Tiendas'];
+  const storeList = [...new Set(deals.map(d => d.store))];
+  const marqueeDeals = deals.map(d => d.marquee).filter(Boolean);
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
@@ -75,13 +67,16 @@ const AppContent = () => {
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
+    setSearchTerm('');
   };
 
   const filteredDeals = deals.filter(deal => {
-    const matchesSearch = deal.store.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          deal.discount.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          deal.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          deal.category.toLowerCase().includes(searchTerm.toLowerCase());
+    const searchTermLower = searchTerm.toLowerCase();
+    const matchesSearch = searchTerm.trim() === '' ||
+                          deal.store.toLowerCase().includes(searchTermLower) ||
+                          deal.discount.toLowerCase().includes(searchTermLower) ||
+                          (deal.code && deal.code.toLowerCase().includes(searchTermLower)) ||
+                          deal.category.toLowerCase().includes(searchTermLower);
     const matchesCategory = selectedCategory === 'Todos' || deal.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
@@ -101,8 +96,8 @@ const AppContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <Header user={user} onLogin={login} onLogout={handleLogout} searchTerm={searchTerm} onSearchChange={handleSearch} />
+    <div className="min-h-screen bg-background-light dark:bg-primary-dark text-text-light dark:text-text-dark transition-colors duration-300">
+      <Header user={user} onLogin={login} onLogout={handleLogout} searchTerm={searchTerm} onSearchChange={handleSearch} stores={storeList} />
       
       <CategoryNav 
         categories={uniqueCategories}
@@ -112,22 +107,17 @@ const AppContent = () => {
 
       <Routes>
         <Route path="/" element={
-          <>
-            {/* CAMBIO: Añadimos 'container mx-auto' al main para centrar el contenido */}
-            <main className="container mx-auto px-4 py-8">
-              <LaunchOfferBanner />
-              <MarqueeDeals deals={MARQUEE_PROMOTIONS_DATA} /> 
-              <DealList 
-                deals={filteredDeals} 
-                onCopyCode={copyCode} 
-                onDealClick={openDealDetails}
-                copiedDealId={copiedDealId}
-              />
-              <PromoCodeList onCopyCode={copyCode} copiedDealId={copiedDealId} />
-            </main>
-          </>
+          <HomePage
+            deals={filteredDeals}
+            marqueeDeals={marqueeDeals}
+            onCopyCode={copyCode}
+            onDealClick={openDealDetails}
+            copiedDealId={copiedDealId}
+          />
         } />
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/tiendas" element={<StoresPage deals={deals} />} />
+        <Route path="/tiendas/:brandName" element={<BrandPage deals={deals} onCopyCode={copyCode} copiedDealId={copiedDealId} />} />
       </Routes>
       
       <Footer />

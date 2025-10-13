@@ -1,29 +1,42 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const MarqueeDeals = ({ deals }) => {
   if (!deals || deals.length === 0) {
-    return null; // No renderiza nada si no hay ofertas para la marquesina
+    return null;
   }
 
-  // Duplicamos las ofertas una vez para crear un efecto de bucle continuo con la animación CSS
+  // Duplicar las ofertas para un bucle infinito y suave
   const duplicatedDeals = [...deals, ...deals];
 
-  const handleDealClick = (link) => {
-    // Abre el enlace de referido en una nueva pestaña
-    window.open(link, '_blank', 'noopener,noreferrer');
+  // Función para convertir el nombre de la marca en una URL amigable (slug)
+  const slugify = (text) => {
+    return text.toString().toLowerCase()
+      .replace(/\s+/g, '-')       // Reemplazar espacios con -
+      .replace(/[^\w\-]+/g, '')   // Eliminar caracteres no válidos
+      .replace(/\-\-+/g, '-')     // Reemplazar guiones múltiples con uno solo
+      .replace(/^-+/, '')          // Eliminar guiones al principio
+      .replace(/-+$/, '');         // Eliminar guiones al final
   };
 
   return (
-    <div className="marquee-container bg-gray-100 dark:bg-gray-800 py-3 shadow-inner mt-8 rounded-lg">
-      <div className="marquee-content">
+    // Contenedor principal de la marquesina
+    <div className="relative w-full overflow-hidden bg-gray-100 dark:bg-secondary-dark py-4 my-8">
+      {/* Contenedor que se anima */}
+      <div className="flex animate-marquee-slow whitespace-nowrap">
+        {/* Mapeo de las ofertas para crear las "píldoras" enlazadas */}
         {duplicatedDeals.map((deal, index) => (
-          <div
-            key={`${deal.id}-${index}`} // Usar index para keys únicas con duplicados
-            className="marquee-item bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-full px-4 py-2 mx-2 flex-shrink-0 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-sm font-medium"
-            onClick={() => handleDealClick(deal.referralLink)}
+          <Link
+            key={index}
+            to={`/tiendas/${slugify(deal.brand)}`}
+            // Estilo de cada "píldora"
+            className="bg-white dark:bg-tertiary-dark rounded-full px-5 py-2 mx-2 shadow-sm cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-accent-cream dark:hover:bg-gray-700 block"
           >
-            {deal.text}
-          </div>
+            <span className="text-sm text-gray-800 dark:text-gray-200">
+              {/* Nombre de la marca en negrita */}
+              <span className="font-bold">{deal.brand}:</span> {deal.text}
+            </span>
+          </Link>
         ))}
       </div>
     </div>
