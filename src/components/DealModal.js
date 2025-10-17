@@ -1,82 +1,84 @@
-import React, { useState } from 'react'; // <-- Importa useState
-import { motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+
+import React, { useState } from 'react';
+import { ClipboardDocumentCheckIcon, XMarkIcon, ClipboardDocumentIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
+import { useBrands } from '../context/BrandContext'; // Importa el hook del nuevo contexto
+import logoMap from '../assets/logo-map';
 
 const DealModal = ({ deal, onClose }) => {
-  const [copied, setCopied] = useState(false); // <-- Nuevo estado para controlar el mensaje de copiado
+    const [isCopied, setIsCopied] = useState(false);
+    const { buildAffiliateUrl } = useBrands(); // Obtiene la función para construir URLs
 
-  if (!deal) return null;
+    if (!deal) return null;
 
-  const copyCode = () => {
-    navigator.clipboard.writeText(deal.code);
-    setCopied(true); // Establece el estado a true para mostrar el mensaje
-    setTimeout(() => {
-      setCopied(false); // Después de 2 segundos, oculta el mensaje
-    }, 2000);
-  };
+    // Construye la URL final usando la lógica centralizada
+    const finalUrl = buildAffiliateUrl(deal.link, deal.brand);
 
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-        onClick={onClose}
-      >
-        <motion.div
-          initial={{ y: -50, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 50, opacity: 0 }}
-          className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md relative"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <button
-            onClick={onClose}
-            className="absolute top-3 right-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
-            title="Cerrar"
-          >
-            <XMarkIcon className="h-6 w-6" />
-          </button>
+    const handleCopy = () => {
+        if (deal.code && !isCopied) {
+            navigator.clipboard.writeText(deal.code);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2500);
+        }
+    };
 
-          <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{deal.store}</h3>
-          
-          <p className="text-xl font-semibold text-green-600 dark:text-green-400 mb-4">{deal.discount}</p>
-          
-          <p className="text-gray-700 dark:text-gray-300 mb-2 flex items-center"> {/* Añade flex y items-center */}
-            Código: {' '}
-            <span
-              onClick={copyCode}
-              className="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md font-mono text-lg cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors inline-block ml-2" // Añade ml-2 para espacio
-              title="Haz clic para copiar el código"
+    const isCodeDeal = deal.type === 'código';
+    const logo = logoMap[deal.brand] || deal.logoUrl;
+    // ... (el resto de la lógica se mantiene igual)
+    const formattedExpires = new Date(deal.expires).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
+    const buttonClass = isCodeDeal ? 'gradient-pink' : 'gradient-orange';
+
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4" onClick={onClose}>
+            <div 
+                className="bg-white rounded-2xl shadow-2xl w-full max-w-md md:max-w-lg transform transition-all duration-300" 
+                onClick={e => e.stopPropagation()}
             >
-              {deal.code}
-            </span>
-            {copied && ( // <-- Muestra el mensaje "Copiado!" si el estado 'copied' es true
-              <motion.span
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 10 }}
-                className="ml-3 text-sm text-green-500 dark:text-green-300 font-semibold"
-              >
-                ¡Copiado!
-              </motion.span>
-            )}
-          </p>
-          
-          <p className="text-gray-600 dark:text-gray-400 mb-1">Categoría: {deal.category}</p>
-          
-          <p className="text-gray-600 dark:text-gray-400 mb-4">Expira: {deal.expires}</p>
+                <div className="relative p-8 text-center">
+                    <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-transform hover:rotate-90 duration-300">
+                        <XMarkIcon className="w-8 h-8" />
+                    </button>
 
-          {deal.description && (
-            <p className="text-gray-700 dark:text-gray-300 mt-4">
-              {deal.description}
-            </p>
-          )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
-  );
+                    {logo && (
+                        <div className="w-20 h-20 mx-auto mb-4 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center p-2 shadow-sm">
+                            <img src={logo} alt={`${deal.brand} logo`} className="max-w-full max-h-full object-contain" />
+                        </div>
+                    )}
+
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">{deal.brand}</h2>
+                    <p className="text-base text-gray-600 mb-6 px-4 max-w-prose mx-auto">{deal.description}</p>
+
+                    {isCodeDeal && (
+                        <div className="mb-6">
+                            <p className="text-sm text-gray-500 mb-3">Copia el código y pégalo en la web de la tienda</p>
+                            <button
+                                onClick={handleCopy}
+                                className={`w-full border-2 border-dashed rounded-lg p-4 flex items-center justify-center gap-3 transition-all duration-300 ${isCopied ? 'border-green-500 bg-green-50' : 'border-pink-300 bg-pink-100 hover:bg-pink-200'}`}
+                            >
+                                <span className={`font-mono text-2xl md:text-3xl font-extrabold tracking-widest ${isCopied ? 'text-green-600' : 'text-pink-500'}`}>
+                                    {isCopied ? '¡COPIADO!' : deal.code}
+                                </span>
+                                {isCopied ? <ClipboardDocumentCheckIcon className="w-7 h-7 text-green-600" /> : <ClipboardDocumentIcon className="w-7 h-7 text-pink-500" />}
+                            </button>
+                        </div>
+                    )}
+
+                    {/* El enlace ahora usa la URL final con el posible código de afiliado */}
+                    <a
+                        href={finalUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() => setTimeout(onClose, 300)}
+                        className={`group w-full text-white font-semibold py-3 px-4 rounded-lg text-base flex items-center justify-center gap-2 animated-gradient-button ${buttonClass}`}
+                    >
+                        <span>Ir a la Tienda</span>
+                        <ArrowTopRightOnSquareIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    </a>
+                     <p className="text-xs text-gray-400 mt-6">Válido hasta: {formattedExpires}</p>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default DealModal;

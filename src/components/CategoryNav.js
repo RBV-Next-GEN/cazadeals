@@ -1,76 +1,45 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // <-- Importar Link
-import {
-  StarIcon,
-  ComputerDesktopIcon,
-  ShoppingBagIcon,
-  CakeIcon,
-  PuzzlePieceIcon,
-  BookOpenIcon,
-  GlobeAltIcon,
-  BuildingStorefrontIcon,
-} from '@heroicons/react/24/outline';
 
-const categoryIcons = {
-  'Todos': StarIcon,
-  'Tech': ComputerDesktopIcon,
-  'Moda': ShoppingBagIcon,
-  'Comida': CakeIcon,
-  'Gaming': PuzzlePieceIcon,
-  'Libros': BookOpenIcon,
-  'Viajes': GlobeAltIcon,
-  'Tiendas': BuildingStorefrontIcon,
-};
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import * as HIcons from '@heroicons/react/24/outline';
 
 const CategoryNav = ({ categories, selectedCategory, onCategoryClick }) => {
-  const getButtonClasses = (category) => {
-    const isSelected = selectedCategory === category;
+  const location = useLocation();
 
-    if (category === 'Tiendas') {
-      // Si la ruta actual es /tiendas, le damos un estilo "seleccionado"
-      if (window.location.pathname.startsWith('/tiendas')) {
-        return 'text-white bg-gradient-to-r from-purple-600 to-pink-600 ring-2 ring-white';
-      }
-      return 'text-white bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600';
-    }
-
-    if (isSelected && category === 'Todos') {
-      return 'bg-accent-orange-light text-white';
-    }
-    
-    if (isSelected) {
-      return 'text-accent-orange-light dark:text-accent-orange-dark bg-secondary-light dark:bg-tertiary-dark';
-    }
-
-    return 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-secondary-light dark:hover:bg-tertiary-dark';
-  };
+  if (!categories || categories.length === 0) {
+    return null;
+  }
 
   return (
-    <nav className="bg-primary-light dark:bg-header-dark shadow-sm py-2">
-      <div className="container mx-auto px-4 flex justify-center space-x-2 sm:space-x-4 md:space-x-6 overflow-x-auto scrollbar-hide">
+    <nav className="bg-primary-light dark:bg-primary-dark shadow-sm py-2 border-b border-t border-gray-200 dark:border-secondary-dark">
+      <div className="container mx-auto px-4 flex justify-center space-x-2 sm:space-x-3 md:space-x-4 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
         {categories.map((category) => {
-          const IconComponent = categoryIcons[category];
-          const classNames = `flex flex-col items-center p-3 rounded-lg transition-colors duration-200 ${getButtonClasses(category)}`;
+          const IconComponent = HIcons[category.icon] || HIcons.TagIcon;
+          const categoryName = category.name;
 
-          // CAMBIO: Si la categoría es "Tiendas", se renderiza como un Link
-          if (category === 'Tiendas') {
+          if (categoryName === 'Tiendas') {
+            const isSelected = location.pathname.startsWith('/tiendas');
+            const classNames = `p-3 rounded-lg transition-all duration-300 text-xs font-medium whitespace-nowrap flex flex-col items-center w-20 text-white ${isSelected ? 'bg-gradient-to-br from-purple-600 to-pink-600 shadow-lg ring-2 ring-white/50' : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow'}`;
+
             return (
-              <Link to="/tiendas" key={category} className={classNames}>
-                {IconComponent && <IconComponent className="h-6 w-6 mb-1" />}
-                <span className="text-xs font-medium whitespace-nowrap">{category}</span>
+              <Link to="/tiendas" key={categoryName} className={classNames}>
+                <IconComponent className="h-6 w-6 mb-1" />
+                <span>{categoryName}</span>
               </Link>
             );
           }
 
-          // El resto de categorías siguen siendo botones
+          const isSelected = selectedCategory === categoryName;
+          const classNames = `p-3 rounded-lg transition-colors duration-200 text-xs font-medium whitespace-nowrap flex flex-col items-center w-20 ${isSelected ? 'bg-accent-orange text-white shadow-md' : 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-secondary-light dark:hover:bg-secondary-dark'}`;
+
           return (
             <button
-              key={category}
-              onClick={() => onCategoryClick(category)}
+              key={categoryName}
+              onClick={() => onCategoryClick(categoryName)}
               className={classNames}
             >
-              {IconComponent && <IconComponent className="h-6 w-6 mb-1" />}
-              <span className="text-xs font-medium whitespace-nowrap">{category}</span>
+              <IconComponent className="h-6 w-6 mb-1" />
+              <span>{categoryName}</span>
             </button>
           );
         })}

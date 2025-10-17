@@ -1,95 +1,44 @@
-/* filepath: c:\Users\Ricardo Bleda\Documents\Lanzadera\cazadeals\src\styles\custom.css */
+/* src/styles/custom.css */
 
-/* Definición de las animaciones de movimiento diagonal */
-@keyframes diagonal-move-slow {
-  from { background-position: 0 0; }
-  to { background-position: 400px 400px; } /* Mueve el fondo 400px en diagonal (el texto se mueve arriba-izquierda) */
+@keyframes gradient-pan {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
 }
 
-@keyframes diagonal-move-fast {
-  from { background-position: 0 0; }
-  to { background-position: 600px 600px; } /* Mueve el fondo más rápido (el texto se mueve arriba-izquierda) */
-}
-
-/* Clases para el banner con el efecto de fondo */
 .launch-banner-bg {
-  position: relative;
-  overflow: hidden;
-  /* El degradado base del banner */
-  background: linear-gradient(to right, #8b5cf6, #ec4899); /* Morado a Rosa */
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient-pan 15s ease infinite;
 }
 
-.launch-banner-bg::before,
-.launch-banner-bg::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-repeat: repeat;
-  pointer-events: none; /* Para que no interfiera con los clics en el contenido */
-  z-index: 0; /* Asegura que esté detrás del contenido */
+@keyframes float-1 {
+    '0%, 100%': { transform: 'translate(0px, 0px) rotate(-5deg)' },
+    '50%': { transform: 'translate(-20px, 20px) rotate(5deg)' }
 }
 
-/* Capa de texto diagonal más lenta y tenue (opacidad 0.1) */
-.launch-banner-bg::before {
-  /* SVG base64 con "Oferta", "Promo", "Descuento" rotados, opacidad: 0.1 */
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRleHQgeD0iMjAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMSIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDIwIDcwKSI+T2ZlcnRhPC90ZXh0Pjx0ZXh0IHg9IjEyMCIgeT0iMTcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMSIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDEyMCAxNzApIj5Qcm9tbzwvdGV4dD48dGV4dCB4PSIyMjAiIHk9IjI3MCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjEiIHRyYW5zZm9ybT0icm90YXRlKC00NSAyMjAgMjcwKSI+RGVzY3VlbnRvPC90ZXh0Pjwvc3ZnPg==");
-  background-size: 300px 300px; /* <-- Actualizado para coincidir con el SVG */
-  animation: diagonal-move-slow 20s linear infinite; /* Animación más lenta */
+@keyframes float-2 {
+    '0%, 100%': { transform: 'translate(0px, 0px) rotate(5deg)' },
+    '50%': { transform: 'translate(20px, -20px) rotate(-5deg)' }
 }
 
-/* Capa de texto diagonal más rápida y visible (opacidad 0.2) */
-.launch-banner-bg::after {
-  /* SVG base64 con "Oferta", "Promo", "Descuento" rotados, opacidad: 0.2 */
-  background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHRleHQgeD0iMjAiIHk9IjcwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuMiIgdHJhbnNmb3JtPSJyb3RhdGUoLTQ1IDIwIDcwKSI+T2ZlcnRhPC90ZXh0Pjx0ZXh0IHg9IjEyMCIgeT0iMTcwIiBmb29udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIwLjIiIHRyYW5zZm9ybT0icm90YXRlKC00NSAxMjAgMTcwKSI+UHJvbW88L3RleHQ+PHRleHQgeD0iMjIwIiB5PSIyNzAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0iI2ZmZmZmZiIgb3BhY2l0eT0iMC4yIiB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgMjIwIDI3MCkiPkRlc2N1ZW50bzwvdGV4dD48L3N2Zz4==");
-  background-size: 300px 300px; /* <-- Actualizado para coincidir con el SVG */
-  animation: diagonal-move-fast 15s linear infinite; /* Animación más rápida, sin 'reverse' */
+@keyframes float-3 {
+    '0%, 100%': { transform: 'translate(0px, 0px) rotate(-10deg)' },
+    '50%': { transform: 'translate(-30px, 30px) rotate(10deg)' }
 }
 
-/* Marquee styles */
-.marquee-container {
-  overflow: hidden;
-  position: relative;
-  width: 100%;
+@keyframes float-4 {
+    '0%, 100%': { transform: 'translate(0px, 0px) rotate(10deg)' },
+    '50%': { transform: 'translate(30px, -30px) rotate(-10deg)' }
 }
 
-.marquee-content {
-  display: flex;
-  white-space: nowrap; /* Evita que los elementos se envuelvan */
-  animation: marquee-scroll 30s linear infinite; /* Ajusta la duración para la velocidad */
-  width: max-content; /* Asegura que el contenido sea tan ancho como sus hijos */
-}
-
-.marquee-item {
-  display: inline-flex; /* Para que los items se alineen horizontalmente */
-  align-items: center;
-  justify-content: center;
-  height: 40px; /* Altura fija para los items */
-}
-
-@keyframes marquee-scroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    /* Mueve el contenido por la mitad de su ancho total (que es el ancho del contenido original) */
-    transform: translateX(-50%);
-  }
-}
-
-/* Estilos para el texto del logo con degradado en movimiento */
-.animated-gradient-text {
-  background-size: 200% auto; /* Hace que el degradado sea más ancho que el texto */
-  animation: gradient-shift 3s linear infinite alternate; /* Animación de 3s, lineal, infinita, alternando dirección */
-}
-
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%; /* Empieza el degradado a la izquierda */
-  }
-  100% {
-    background-position: 100% 50%; /* Mueve el degradado a la derecha */
-  }
-}
+.animate-float-1 { animation: float-1 15s ease-in-out infinite; }
+.animate-float-2 { animation: float-2 18s ease-in-out infinite; }
+.animate-float-3 { animation: float-3 22s ease-in-out infinite; }
+.animate-float-4 { animation: float-4 16s ease-in-out infinite; }

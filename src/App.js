@@ -1,134 +1,120 @@
+
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AnimatePresence } from 'framer-motion';
-import { collection, onSnapshot } from 'firebase/firestore'; // Importa las funciones de Firestore
-import { db } from './firebase'; // Importa la configuración de la base de datos
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrandProvider } from './context/BrandContext';
+import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { db } from './firebase';
+
+// Componentes
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { ThemeProvider } from './context/theme';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import GoogleAuthWrapper, { useAuth } from './components/GoogleAuthWrapper';
-import UserProfile from './components/UserProfile';
-import DealModal from './components/DealModal';
-import CategoryNav from './components/CategoryNav';
-import StoresPage from './components/StoresPage';
-import BrandPage from './components/BrandPage';
 import HomePage from './pages/HomePage';
+import StoresPage from './pages/StoresPage';
+import BrandPage from './pages/BrandPage';
+import ProfilePage from './pages/ProfilePage';
+import DealModal from './components/DealModal';
 
-// La variable ALL_DEALS_DATA ha sido eliminada. ¡Ahora los datos vendrán de Firebase!
+// Admin
+import AdminLayout from './components/admin/AdminLayout';
+import AdminRouteGuard from './components/admin/AdminRouteGuard';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminDealsPage from './pages/admin/AdminDealsPage';
+import AdminBrandsPage from './pages/admin/AdminBrandsPage';
+import AdminScraperPage from './pages/admin/AdminScraperPage';
+
+const AdminMarqueePage = () => <div className="p-8"><h1>Gestionar Marquesina (Próximamente)</h1></div>;
+const AdminUsersPage = () => <div className="p-8"><h1>Gestionar Usuarios (Próximamente)</h1></div>;
 
 function App() {
   return (
-    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
-      <ThemeProvider>
-        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <GoogleAuthWrapper>
-            <AppContent />
-          </GoogleAuthWrapper>
-        </Router>
-      </ThemeProvider>
-    </GoogleOAuthProvider>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <BrandProvider>
+        <AppContent />
+      </BrandProvider>
+    </Router>
   );
 }
 
 const AppContent = () => {
-  const { user, login, handleLogout } = useAuth();
+    const location = useLocation();
+    const isAdminRoute = location.pathname.startsWith('/admin');
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [deals, setDeals] = useState([]); // El estado inicial ahora es un array vacío
-  const [selectedCategory, setSelectedCategory] = useState('Todos');
-  const [copiedDealId, setCopiedDealId] = useState(null);
-  const [selectedDeal, setSelectedDeal] = useState(null);
+    const [deals, setDeals] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [marqueeDeals, setMarqueeDeals] = useState([]);
+    const [selectedDeal, setSelectedDeal] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCategory, setSelectedCategory] = useState('Todos');
 
-  // --- ¡Magia de Firebase aquí! ---
-  useEffect(() => {
-    // Crea una referencia a la colección 'deals' en tu base de datos Firestore
-    const dealsCollectionRef = collection(db, 'deals');
+    useEffect(() => {
+        if (isAdminRoute) return;
+        
+        const fetchData = async () => {
+            try {
+                const dealsSnapshot = await getDocs(collection(db, 'deals'));
+                const dealList = dealsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setDeals(dealList);
+                setMarqueeDeals(dealList.slice(0, 10));
 
-    // Escucha los cambios en la colección en tiempo real
-    const unsubscribe = onSnapshot(dealsCollectionRef, (snapshot) => {
-      const dealsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setDeals(dealsData); // Actualiza el estado con los datos de Firebase
-    });
+                const categoriesSnapshot = await getDocs(query(collection(db, 'categories'), orderBy('name')));
+                const categoryList = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setCategories(categoryList);
+            } catch (error) { console.error("Error fetching data: ", error); }
+        };
+        fetchData();
+    }, [isAdminRoute]);
+    
+    const handleDealClick = (deal) => {
+        setSelectedDeal(deal);
+        setIsModalOpen(true);
+    };
 
-    // Limpia el listener cuando el componente se desmonta para evitar fugas de memoria
-    return () => unsubscribe();
-  }, []); // Se ejecuta solo una vez, cuando el componente se monta
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedDeal(null);
+    };
+    
+    const handleSelectCategory = (categoryName) => {
+        setSelectedCategory(categoryName);
+    };
 
-  // Las categorías, tiendas y ofertas de la marquesina ahora se derivan dinámicamente
-  // del estado 'deals', que es alimentado por Firebase.
-  const uniqueCategories = ['Todos', ...new Set(deals.map(deal => deal.category)), 'Tiendas'];
-  const storeList = [...new Set(deals.map(d => d.store))];
-  const marqueeDeals = deals.map(d => d.marquee).filter(Boolean);
+    const filteredDeals = selectedCategory === 'Todos' ? deals : deals.filter(deal => deal.category === selectedCategory);
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+    return (
+         <div className={`flex flex-col min-h-screen ${!isAdminRoute ? 'bg-gray-50 dark:bg-gray-900' : ''}`}>
+            {!isAdminRoute && <Header />}
+            <main className="flex-grow">
+                <Routes>
+                    {/* --- RUTA CORREGIDA --- */}
+                    <Route path="/" element={
+                        <HomePage 
+                            deals={filteredDeals} 
+                            categories={categories} 
+                            marqueeDeals={marqueeDeals} 
+                            onDealClick={handleDealClick} 
+                            activeCategory={selectedCategory} 
+                            onCategorySelect={handleSelectCategory}
+                        />} 
+                    />
+                    <Route path="/tiendas" element={<StoresPage />} />
+                    <Route path="/tiendas/:brandId" element={<BrandPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
 
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    setSearchTerm('');
-  };
-
-  const filteredDeals = deals.filter(deal => {
-    const searchTermLower = searchTerm.toLowerCase();
-    const matchesSearch = searchTerm.trim() === '' ||
-                          deal.store.toLowerCase().includes(searchTermLower) ||
-                          deal.discount.toLowerCase().includes(searchTermLower) ||
-                          (deal.code && deal.code.toLowerCase().includes(searchTermLower)) ||
-                          deal.category.toLowerCase().includes(searchTermLower);
-    const matchesCategory = selectedCategory === 'Todos' || deal.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const copyCode = (code, id) => {
-    navigator.clipboard.writeText(code);
-    setCopiedDealId(id);
-    setTimeout(() => setCopiedDealId(null), 2000);
-  };
-
-  const openDealDetails = (deal) => {
-    setSelectedDeal(deal);
-  };
-
-  const closeDealDetails = () => {
-    setSelectedDeal(null);
-  };
-
-  return (
-    <div className="min-h-screen bg-background-light dark:bg-primary-dark text-text-light dark:text-text-dark transition-colors duration-300">
-      <Header user={user} onLogin={login} onLogout={handleLogout} searchTerm={searchTerm} onSearchChange={handleSearch} stores={storeList} />
-      
-      <CategoryNav 
-        categories={uniqueCategories}
-        selectedCategory={selectedCategory}
-        onCategoryClick={handleCategoryClick}
-      />
-
-      <Routes>
-        <Route path="/" element={
-          <HomePage
-            deals={filteredDeals}
-            marqueeDeals={marqueeDeals}
-            onCopyCode={copyCode}
-            onDealClick={openDealDetails}
-            copiedDealId={copiedDealId}
-          />
-        } />
-        <Route path="/profile" element={<UserProfile />} />
-        <Route path="/tiendas" element={<StoresPage deals={deals} />} />
-        <Route path="/tiendas/:brandName" element={<BrandPage deals={deals} onCopyCode={copyCode} copiedDealId={copiedDealId} />} />
-      </Routes>
-      
-      <Footer />
-
-      <AnimatePresence>
-        {selectedDeal && (
-          <DealModal deal={selectedDeal} onClose={closeDealDetails} />
-        )}
-      </AnimatePresence>
-    </div>
-  );
-};
+                    {/* Rutas de Administración */}
+                    <Route path="/admin" element={<AdminRouteGuard><AdminLayout /></AdminRouteGuard>}>
+                        <Route index element={<AdminDashboardPage />} />
+                        <Route path="deals" element={<AdminDealsPage />} />
+                        <Route path="brands" element={<AdminBrandsPage />} />
+                        <Route path="marquee" element={<AdminMarqueePage />} />
+                        <Route path="scraper" element={<AdminScraperPage />} />
+                        <Route path="users" element={<AdminUsersPage />} />
+                    </Route>
+                </Routes>
+            </main>
+            {!isAdminRoute && <Footer />}
+            {isModalOpen && <DealModal deal={selectedDeal} onClose={handleCloseModal} />}
+        </div>
+    );
+}
 
 export default App;

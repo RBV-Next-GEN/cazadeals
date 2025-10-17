@@ -1,28 +1,21 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getFirestore } from "firebase/firestore";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth"; 
+
+// Tu configuración de Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAFb9iuTHzQCdtZaeEKzK3NPNlRWMNfcf0",
-  authDomain: "cazadeals.firebaseapp.com",
-  projectId: "cazadeals",
-  storageBucket: "cazadeals.firebasestorage.app",
-  messagingSenderId: "161064154877",
-  appId: "1:161064154877:web:995003b7e214a1f8517094",
-  measurementId: "G-GHNWNSJDBS"
+  apiKey: "AIzaSyALPgh6mj6SWZ83s4CTdeBeIn58oTv-ioM",
+  authDomain: "cazadeals-56767918-79225.firebaseapp.com",
+  projectId: "cazadeals-56767918-79225",
+  storageBucket: "cazadeals-56767918-79225.appspot.com", // Corregido el dominio del bucket
+  messagingSenderId: "470034906223",
+  appId: "1:470034906223:web:e4ae39d7a835890ed1e19a"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Inicializa Firebase
+export const app = initializeApp(firebaseConfig);
 
-// Obtener una instancia de Firestore
-// Esta es la base de datos que usaremos para almacenar y leer las ofertas
-const db = getFirestore(app);
-
-export { db };
+// Exporta los servicios que necesitas en el resto de la app
+export const db = getFirestore(app);
+export const auth = getAuth(app);

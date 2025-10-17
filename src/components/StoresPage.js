@@ -1,110 +1,133 @@
 
-import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { ChevronRightIcon } from '@heroicons/react/24/solid';
-
-const StoresPage = ({ deals }) => {
-    const [filter, setFilter] = useState('Todos');
-
-    // 1. Crear una lista única de tiendas con su logo y recuento de promociones
-    const stores = useMemo(() => {
-        if (!deals || deals.length === 0) {
-            return [];
-        }
-
-        const storeMap = new Map();
-        deals.forEach(deal => {
-            if (!storeMap.has(deal.store)) {
-                storeMap.set(deal.store, {
-                    name: deal.store,
-                    logoUrl: deal.logoUrl, // Asegurarse de que logoUrl esté disponible
-                    dealCount: 0,
-                });
-            }
-            storeMap.get(deal.store).dealCount += 1;
-        });
-
-        // Convertir el mapa a un array y ordenarlo alfabéticamente
-        return Array.from(storeMap.values()).sort((a, b) => a.name.localeCompare(b.name));
-    }, [deals]);
-
-    // 2. Filtrar las tiendas según la letra seleccionada
-    const filteredStores = useMemo(() => {
-        if (filter === 'Todos') {
-            return stores;
-        }
-        if (filter === '0-9') {
-            return stores.filter(store => /^[0-9]/.test(store.name));
-        }
-        return stores.filter(store => store.name.toUpperCase().startsWith(filter));
-    }, [stores, filter]);
-
-    const alphabet = ['Todos', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''), '0-9'];
-
-    const StoreCard = ({ store }) => (
-        <Link 
-            to={`/tiendas/${encodeURIComponent(store.name)}`}
-            className="block bg-white dark:bg-secondary-dark rounded-lg shadow-md p-4 transition-all duration-300 ease-in-out border border-gray-200 dark:border-tertiary-dark hover:shadow-xl hover:-translate-y-1"
-        >
-            <div className="h-24 flex items-center justify-center mb-4 bg-gray-50 dark:bg-gray-700 rounded-md">
-                {store.logoUrl ? (
-                    <img src={store.logoUrl} alt={`${store.name} logo`} className="max-h-16 max-w-[80%] object-contain" />
-                ) : (
-                    <span className="text-xl font-bold text-gray-500">{store.name}</span>
-                )}
-            </div>
-            <div className="text-center">
-                <h3 className="font-bold text-lg text-text-light dark:text-text-dark">{store.name}</h3>
-                <p className="text-sm text-green-600 dark:text-green-400 font-semibold">{store.dealCount} promociones</p>
-            </div>
-        </Link>
-    );
-
-    return (
-        <div className="bg-gray-50 dark:bg-primary-dark py-12">
-            <div className="container mx-auto px-4">
-                {/* Breadcrumbs */}
-                <nav className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-8">
-                    <Link to="/" className="hover:underline">CazaDeals</Link>
-                    <ChevronRightIcon className="h-3 w-3 mx-2" />
-                    <span className="font-semibold text-gray-700 dark:text-white">Tiendas</span>
-                </nav>
-
-                <h1 className="text-4xl font-extrabold text-text-light dark:text-text-dark mb-4">Lista de las Marcas con cupones y promociones</h1>
-                <p className="text-lg text-gray-600 dark:text-gray-400 mb-10">Encuentra cupones y ofertas de tus tiendas favoritas.</p>
-
-                {/* Filtro Alfabético */}
-                <div className="flex flex-wrap justify-center gap-2 mb-12">
-                    {alphabet.map(letter => (
-                        <button
-                            key={letter}
-                            onClick={() => setFilter(letter)}
-                            className={`w-10 h-10 rounded-md font-semibold text-sm transition-all duration-200 ${
-                                filter === letter
-                                    ? 'bg-accent-orange-light text-white shadow-lg transform scale-110'
-                                    : 'bg-white dark:bg-secondary-dark text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-tertiary-dark'
-                            }`}
-                        >
-                            {letter}
-                        </button>
-                    ))}
-                </div>
-
-                {/* Grid de Tiendas */}
-                {filteredStores.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-                        {filteredStores.map(store => (
-                            <StoreCard key={store.name} store={store} />
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-16">
-                        <p className="text-xl text-gray-500 dark:text-gray-400">No se encontraron tiendas que comiencen con la letra "{filter}".</p>
-                    </div>
-                )}
-            </div>
-        </div>
-    );
-};
-
-export default StoresPage;
+      import { collection, getDocs, query, where } from 'firebase/firestore';
+      import { db } from '../firebase';
+      import { useEffect, useState } from 'react';
+      import { Link } from 'react-router-dom';
+      
+      const Breadcrumbs = () => (
+          <nav aria-label="Breadcrumb" className="mb-8">
+              <ol className="flex items-center gap-2 text-sm text-text-secondary-light dark:text-text-secondary-dark">
+                  <li><Link to="/" className="hover:underline">CazaDeals</Link></li>
+                  <li><span className="text-gray-400">/</span></li>
+                  <li><span className="font-semibold text-text-primary-light dark:text-text-primary-dark">Tiendas</span></li>
+              </ol>
+          </nav>
+      );
+      
+      const AlphabetFilter = ({ onFilter, activeLetter }) => {
+          const alphabet = ['Todas', ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')];
+          return (
+              <div className="flex justify-center flex-wrap gap-2 mb-12">
+                  {alphabet.map(letter => (
+                      <button 
+                          key={letter}
+                          onClick={() => onFilter(letter)}
+                          className={`w-10 h-10 rounded-full font-semibold transition-all duration-200 ${activeLetter === letter ? 'bg-accent-orange text-white scale-110 shadow-lg' : 'bg-secondary-light dark:bg-secondary-dark text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-300 dark:hover:bg-gray-600'}`}>
+                          {letter === 'Todas' ? '#' : letter}
+                      </button>
+                  ))}
+              </div>
+          );
+      };
+      
+      const StoreCard = ({ brand }) => (
+          <div className="bg-primary-light dark:bg-primary-dark rounded-xl shadow-md p-4 flex flex-col items-center text-center transition-all duration-300 hover:shadow-xl hover:scale-105 border border-transparent hover:border-gray-200 dark:hover:border-gray-700">
+              <div className="w-24 h-20 flex items-center justify-center mb-3">
+                  <img src={brand.logoUrl} alt={`${brand.name} logo`} className="max-w-full max-h-full object-contain" />
+              </div>
+              <h3 className="font-bold text-lg mb-3 text-text-primary-light dark:text-text-primary-dark truncate w-full">{brand.name}</h3>
+              <Link to={`/tiendas/${brand.id}`} className="w-full mt-auto bg-blue-500 text-white font-semibold py-2 px-3 rounded-lg hover:bg-blue-600 transition-colors duration-300 text-sm">
+                  Ver {brand.dealCount} {brand.dealCount === 1 ? 'oferta' : 'ofertas'}
+              </Link>
+          </div>
+      );
+      
+      function StoresPage({ deals }) {
+          const [allBrands, setAllBrands] = useState([]);
+          const [filteredBrands, setFilteredBrands] = useState([]);
+          const [activeLetter, setActiveLetter] = useState('Todas');
+          const [loading, setLoading] = useState(true);
+      
+          useEffect(() => {
+              const processBrands = async () => {
+                  setLoading(true);
+      
+              // Contar ofertas por marca
+              const dealCounts = new Map();
+              if (deals && deals.length > 0) {
+                  deals.forEach(deal => {
+                      if (deal.brand) {
+                          dealCounts.set(deal.brand, (dealCounts.get(deal.brand) || 0) + 1);
+                      }
+                  });
+              }
+              
+              // Mapa de logos para enriquecer los datos de la marca
+              const logoMap = {
+                  'El Corte Inglés': 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/El_Corte_Ingl%C3%A9s_logo.svg/1200px-El_Corte_Ingl%C3%A9s_logo.svg.png',
+                  'Amazon': 'https://brandemia.org/contenido/subidas/2022/11/logo-amazon-2000-actualidad-1024x576.png',
+                  'Zalando': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Zalando_logo.svg/2560px-Zalando_logo.svg.png',
+                  'PcComponentes': 'https://www.pccomponentes.com/img/pccom-logo.svg',
+                  'Casa del Libro': 'https://upload.wikimedia.org/wikipedia/commons/c/c5/Casa_del_Libro_logo.svg',
+                  'Game': 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/GAME_Logo.svg/2560px-GAME_Logo.svg.png',
+                  'Glovo': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Glovo_logo.svg/2560px-Glovo_logo.svg.png',
+                  'Booking.com': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Booking.com_logo.svg/2560px-Booking.com_logo.svg.png'
+              };
+      
+                  // Cargar todas las marcas desde Firestore
+                  const brandsCollection = await getDocs(collection(db, 'brands'));
+                  let brandsData = brandsCollection.docs.map(doc => {
+                      const data = doc.data();
+                      return {
+                          id: doc.id,
+                          ...data,
+                          logoUrl: logoMap[data.name] || data.logoUrl, // Usar el logo del mapa, o el de la DB como fallback
+                          dealCount: dealCounts.get(data.name) || 0
+                      };
+                  }).filter(brand => brand.dealCount > 0);
+      
+                  // Ordenar alfabéticamente
+                  brandsData.sort((a, b) => a.name.localeCompare(b.name));
+      
+                  setAllBrands(brandsData);
+                  setFilteredBrands(brandsData);
+                  setLoading(false);
+              };
+      
+              processBrands();
+          }, [deals]);
+      
+          const handleFilter = (letter) => {
+              setActiveLetter(letter);
+              if (letter === 'Todas') {
+                  setFilteredBrands(allBrands);
+              } else {
+                  setFilteredBrands(allBrands.filter(brand => brand.name.toUpperCase().startsWith(letter)));
+              }
+          };
+      
+          return (
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                  <Breadcrumbs />
+                  <h1 className="text-4xl font-bold text-center mb-6 text-text-primary-light dark:text-text-primary-dark">Todas las Tiendas</h1>
+                  <p className="text-center text-lg text-text-secondary-light dark:text-text-secondary-dark mb-12">Encuentra ofertas y códigos de descuento de tus tiendas favoritas.</p>
+                  
+                  <AlphabetFilter onFilter={handleFilter} activeLetter={activeLetter} />
+                  
+                  {loading ? (
+                      <p className="text-center py-12">Cargando tiendas...</p>
+                  ) : filteredBrands.length > 0 ? (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                          {filteredBrands.map((brand) => (
+                              <StoreCard key={brand.id} brand={brand} />
+                          ))}
+                      </div>
+                  ) : (
+                      <p className="text-center py-12 text-text-secondary-light dark:text-text-secondary-dark">No hay tiendas que empiecen por la letra "{activeLetter}".</p>
+                  )}
+              </div>
+          );
+      }
+      
+      export default StoresPage;
+      
