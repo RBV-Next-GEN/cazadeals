@@ -1,72 +1,55 @@
-import { useState } from 'react';
-import CouponModal from './CouponModal'; // We will create this component next
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
-function CouponCard({ coupon }) {
-    const [isModalOpen, setIsModalOpen] = useState(false);
+// CORRECCIÓN: Se usa 'brand' en lugar de 'brandName' para que coincida con los datos de Firebase.
+// Y se añade un logo de fallback por si la marca no existe o no se encuentra.
+const CouponCard = ({ deal, onOpenModal }) => {
+    const [isCopied, setIsCopied] = useState(false);
 
-    const handleCardClick = () => {
-        if (coupon.type === 'código') {
-            setIsModalOpen(true);
-        } else {
-            // For offers, you might want to redirect directly or show a different modal.
-            // For now, let's just log it or redirect.
-            console.log('Redirecting to offer...');
-            // window.open(coupon.targetUrl, '_blank'); // Example of direct redirection
-        }
+    if (!deal) return null;
+
+    // Se desestructura 'brand' que es el nombre correcto del campo.
+    const { brand, title, code } = deal;
+    
+    // Se añade un fallback por si la marca es nula o indefinida, para evitar que la app se rompa.
+    const logoUrl = brand 
+        ? `https://logo.clearbit.com/${brand.toLowerCase().replace(/ /g, '')}.com`
+        : 'https://via.placeholder.com/64'; // Un logo genérico
+
+    const handleCopy = (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(code);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
     };
 
-    const buttonText = coupon.type === 'código' ? 'CONSIGUE EL CÓDIGO' : 'ACTIVA LA OFERTA';
-    const buttonColor = coupon.type === 'código' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-green-600 hover:bg-green-700';
-
     return (
-        <>
-            <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-6 flex items-center justify-between transition-shadow hover:shadow-lg">
-                {/* Left Side: Discount & Title */}
-                <div className="flex items-center">
-                    <div className="text-center w-28 mr-6">
-                        <span className="text-3xl font-bold text-blue-600">{coupon.discount}</span>
-                        <span className="text-sm text-gray-500 block">de descuento</span>
-                    </div>
-                    <div>
-                        <h3 className="font-bold text-lg text-gray-800">{coupon.title}</h3>
-                        <div className="flex items-center space-x-1 text-sm text-gray-500 mt-2 cursor-pointer group">
-                            <span>Detalles</span>
-                            <svg className="w-4 h-4 transform transition-transform group-hover:translate-y-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Side: Button & Meta Info */}
-                <div className="text-right">
-                    <button 
-                        onClick={handleCardClick} 
-                        className={`relative text-white font-bold py-3 px-6 rounded-lg shadow-md transition-transform transform hover:scale-105 ${buttonColor}`}>
-                        
-                        {coupon.type === 'código' ? (
-                            // This is the container for the "tape" effect
-                            <div className="coupon-tape-container">
-                                <span className="z-10 relative">{buttonText}</span>
-                                <div className="coupon-tape-right">{coupon.code.slice(-3)}</div>
-                            </div>
-                        ) : (
-                            <span>{buttonText}</span>
-                        )}
-                    </button>
-                    <div className="mt-2 text-xs text-gray-400">
-                        <span>{coupon.activations} Activados</span> | <span>{coupon.expiry}</span>
-                    </div>
-                </div>
+        <motion.div 
+            layout
+            initial={{ opacity: 0, y: 50, scale: 0.9 }} 
+            animate={{ opacity: 1, y: 0, scale: 1 }} 
+            exit={{ opacity: 0, scale: 0.8 }} 
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+            className="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 flex items-center p-4 space-x-4"
+        >
+            <div className="flex-shrink-0" onClick={() => onOpenModal(deal)}>
+                {/* Se usa 'brand' para el alt text */}
+                <img src={logoUrl} alt={`${brand || 'Marca'} logo`} className="w-16 h-16 rounded-lg object-contain cursor-pointer"/>
             </div>
-
-            {/* Modal - will only be rendered when isModalOpen is true */}
-            {isModalOpen && (
-                <CouponModal 
-                    coupon={coupon} 
-                    onClose={() => setIsModalOpen(false)} 
-                />
-            )}
-        </>
+            <div className="flex-grow min-w-0" onClick={() => onOpenModal(deal)}>
+                <h3 className="font-bold text-lg text-gray-900 dark:text-white truncate cursor-pointer">{title}</h3>
+                {/* Se usa 'brand' para mostrar el nombre */}
+                <p className="text-sm text-gray-500 dark:text-gray-400">{brand}</p>
+            </div>
+            <div className="flex-shrink-0">
+                <button 
+                    onClick={handleCopy}
+                    className={`w-32 text-center py-3 px-3 font-bold rounded-lg transition-all duration-300 ${isCopied ? 'bg-green-500 text-white' : 'bg-orange-100 text-orange-600 dark:bg-gray-700 dark:text-orange-400 hover:bg-orange-500 hover:text-white'}`}>
+                    {isCopied ? '¡Copiado!' : code}
+                </button>
+            </div>
+        </motion.div>
     );
-}
+};
 
 export default CouponCard;

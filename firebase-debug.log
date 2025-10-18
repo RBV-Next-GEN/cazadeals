@@ -191,3 +191,112 @@
 [debug] [2025-10-18T13:30:04.339Z] [functions[us-central1-scrapeOffers]] http function initialized (http://127.0.0.1:5000/cazadeals-56767918-79225/us-central1/scrapeOffers).
 [info] i  functions: Loaded functions: scrapeOffers 
 [warn] ⚠  functions: The following emulators are not running, calls to these services will affect production: firestore, database, pubsub, storage, eventarc, tasks 
+[debug] [2025-10-18T13:35:07.008Z] ----------------------------------------------------------------------
+[debug] [2025-10-18T13:35:07.011Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js functions:shell
+[debug] [2025-10-18T13:35:07.012Z] CLI Version:   14.19.1
+[debug] [2025-10-18T13:35:07.012Z] Platform:      linux
+[debug] [2025-10-18T13:35:07.013Z] Node Version:  v20.19.1
+[debug] [2025-10-18T13:35:07.013Z] Time:          Sat Oct 18 2025 13:35:07 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-18T13:35:07.013Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-18T13:35:07.518Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:35:07.519Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:35:07.523Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/cazadeals-56767918 [none]
+[debug] [2025-10-18T13:35:08.530Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/cazadeals-56767918 200
+[debug] [2025-10-18T13:35:08.532Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/cazadeals-56767918 {"workspaceId":"cazadeals-56767918","name":"cazadeals","workspaceRedirectUrl":"firebase-cazadeals-1760353876561.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-10-18T09:33:50.873521Z","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-3772938666353265169@monospace-per-ws-sa-8.iam.gserviceaccount.com","gitRepoUrl":"https://github.com/RBV-Next-GEN/cazadeals/","enableNix":true,"ownerEmail":"ricardobledaoficial@gmail.com","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtY2F6YWRlYWxzLTE3NjAzNTM4NzY1NjEuY2x1c3Rlci1mYmZqbHRuMzc1YzZ3cXhsaG9laGJ6NDRzay5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NjA3OTQ1MDgsImV4cCI6MTc2MDg4MDkwOH0.5Vic1xj7THfQwkD8WflIt-4eSdSRZqHpcsCo5vIi22Kfifm2lzeHQSyCNlBPmDHd6RqNPSohp1eziy1uNzb5Rt3S7fvr4wBXpEGRqY6wcyUsZWWnXy1r1YZdeqyzWE-YrJGcBheAhOew04ve-VVBrH2532hqSYLJbPzAziHLJNR4TvZuQv28otTJau7mkvKvbj-dht19N_YRbNeJnCNRRA85IwDpK8gbGCqIQdTy9ncEEynL9ir3kqnHaBNUJwatrUKzU0Qo-txO4L-cjhktohNE1jbHtTYySt_wpXiXRmVtpDEprbjL6Lw7wtUnDq4utuvLR9wuaIK88wvYFJNgfQ","firebaseProjectId":"cazadeals-56767918-79225"}
+[debug] [2025-10-18T13:35:08.533Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-18T13:35:08.536Z] > authorizing via signed-in user (ricardobledaoficial@gmail.com)
+[debug] [2025-10-18T13:35:08.536Z] [iam] checking project cazadeals-56767918-79225 for permissions ["firebase.projects.get"]
+[debug] [2025-10-18T13:35:08.537Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:35:08.537Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:35:08.538Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions [none]
+[debug] [2025-10-18T13:35:08.538Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions x-goog-quota-user=projects/cazadeals-56767918-79225
+[debug] [2025-10-18T13:35:08.540Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-18T13:35:09.146Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions 200
+[debug] [2025-10-18T13:35:09.146Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-18T13:35:09.152Z] Emulator locator file path: /tmp/hub-cazadeals-56767918-79225.json
+[warn] ⚠  functions: Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001 {"metadata":{"emulator":{"name":"functions"},"message":"Error when trying to check port 5001 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5001"}}
+[warn] ⚠  functions: Port 5000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"functions"},"message":"Port 5000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  functions: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \"host\": \"<ip address>\" instead of hostname in firebase.json"}}
+[warn] ⚠  functions: Functions Emulator unable to start on port 5000, starting on 5001 instead. {"metadata":{"emulator":{"name":"functions"},"message":"Functions Emulator unable to start on port 5000, starting on 5001 instead."}}
+[warn] ⚠  functions: Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful! {"metadata":{"emulator":{"name":"functions"},"message":"Application Default Credentials detected. Non-emulated services will access production using these credentials. Be careful!"}}
+[debug] [2025-10-18T13:35:41.983Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:35:41.983Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:35:41.983Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/cazadeals-56767918-79225/adminSdkConfig [none]
+[debug] [2025-10-18T13:35:42.525Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/cazadeals-56767918-79225/adminSdkConfig 200
+[debug] [2025-10-18T13:35:42.525Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/cazadeals-56767918-79225/adminSdkConfig {"projectId":"cazadeals-56767918-79225","storageBucket":"cazadeals-56767918-79225.firebasestorage.app"}
+[debug] [2025-10-18T13:35:42.550Z] [functions] Watching "/home/user/cazadeals/functions" for Cloud Functions...
+[debug] [2025-10-18T13:35:42.565Z] Validating nodejs source
+[warn] ⚠  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] ⚠  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-10-18T13:35:43.591Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for CazaDeals",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "latest",
+    "@puppeteer/browsers": "latest",
+    "cors": "latest",
+    "firebase-admin": "latest",
+    "firebase-functions": "latest",
+    "puppeteer-core": "latest"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "latest"
+  },
+  "private": true
+}
+[debug] [2025-10-18T13:35:43.592Z] Building nodejs source
+[debug] [2025-10-18T13:35:43.593Z] Failed to find version of module node: reached end of search path /home/user/cazadeals/functions/node_modules
+[info] ✔  functions: Using node@20 from host. 
+[debug] [2025-10-18T13:35:43.604Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-10-18T13:35:43.613Z] Found firebase-functions binary at '/home/user/cazadeals/functions/node_modules/.bin/firebase-functions'
+[info] Serving at port 8606
+
+[debug] [2025-10-18T13:35:45.357Z] Functions emulator received unknown request at path /
+[debug] [2025-10-18T13:35:45.520Z] Functions emulator received unknown request at path /
+[debug] [2025-10-18T13:35:45.646Z] Functions emulator received unknown request at path /
+[debug] [2025-10-18T13:35:45.773Z] Functions emulator received unknown request at path /
+[debug] [2025-10-18T13:35:45.850Z] Functions emulator received unknown request at path /
+[debug] [2025-10-18T13:35:45.886Z] Got response from /__/functions.yaml {"endpoints":{"scrapeOffers":{"availableMemoryMb":1024,"timeoutSeconds":540,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","region":["us-central1"],"secretEnvironmentVariables":[{"key":"GEMINI_API_KEY"}],"labels":{},"callableTrigger":{},"entryPoint":"scrapeOffers"}},"specVersion":"v1alpha1","requiredAPIs":[],"extensions":{}}
+[debug] [2025-10-18T13:35:45.977Z] [functions] Loaded functions definitions from source: scrapeOffers.
+[debug] [2025-10-18T13:35:45.984Z] [functions[us-central1-scrapeOffers]] http function initialized (http://127.0.0.1:5001/cazadeals-56767918-79225/us-central1/scrapeOffers).
+[info] i  functions: Loaded functions: scrapeOffers 
+[warn] ⚠  functions: The following emulators are not running, calls to these services will affect production: firestore, database, pubsub, storage, eventarc, tasks 
+[debug] [2025-10-18T13:37:03.573Z] ----------------------------------------------------------------------
+[debug] [2025-10-18T13:37:03.575Z] Command:       /nix/store/ws50yvm6vzlzf7jzz6n7xh4szddrack1-nodejs-20.19.1/bin/node /nix/store/i78h9v2gl6qg2w9646hi06syn3hbv4kj-firebase-tools-14.19.1/lib/node_modules/firebase-tools/lib/bin/firebase.js functions:shell
+[debug] [2025-10-18T13:37:03.576Z] CLI Version:   14.19.1
+[debug] [2025-10-18T13:37:03.576Z] Platform:      linux
+[debug] [2025-10-18T13:37:03.576Z] Node Version:  v20.19.1
+[debug] [2025-10-18T13:37:03.577Z] Time:          Sat Oct 18 2025 13:37:03 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-10-18T13:37:03.577Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-10-18T13:37:04.092Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:37:04.093Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:37:04.097Z] >>> [apiv2][query] GET https://monospace-pa.googleapis.com/v1/workspaces/cazadeals-56767918 [none]
+[debug] [2025-10-18T13:37:04.913Z] <<< [apiv2][status] GET https://monospace-pa.googleapis.com/v1/workspaces/cazadeals-56767918 200
+[debug] [2025-10-18T13:37:04.914Z] <<< [apiv2][body] GET https://monospace-pa.googleapis.com/v1/workspaces/cazadeals-56767918 {"workspaceId":"cazadeals-56767918","name":"cazadeals","workspaceRedirectUrl":"firebase-cazadeals-1760353876561.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev","status":"WORKSPACE_STATUS_RUNNING","lastAccessDatetime":"2025-10-18T09:33:50.873521Z","workspaceTemplate":"WORKSPACE_TEMPLATE_BLANK_WEB","owner":"SELF","serviceAccountEmail":"msp-3772938666353265169@monospace-per-ws-sa-8.iam.gserviceaccount.com","gitRepoUrl":"https://github.com/RBV-Next-GEN/cazadeals/","enableNix":true,"ownerEmail":"ricardobledaoficial@gmail.com","workstationAccessToken":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2Nsb3VkLmdvb2dsZS5jb20vd29ya3N0YXRpb25zIiwiYXVkIjoiZmlyZWJhc2UtY2F6YWRlYWxzLTE3NjAzNTM4NzY1NjEuY2x1c3Rlci1mYmZqbHRuMzc1YzZ3cXhsaG9laGJ6NDRzay5jbG91ZHdvcmtzdGF0aW9ucy5kZXYiLCJpYXQiOjE3NjA3OTQ2MjQsImV4cCI6MTc2MDg4MTAyNH0.NbYLwXSweLx3iFMMDTFF74JJTztn77MaszMZpQ8jK85CAzztZH5OOfOboMqZ-cwdoP_C4mzVHgbMiZXzYprKZoI9Im02SzxpaeR9ekGXj_a4Hyc6pR8C0ao6vMHBO0NxxXN1FQmbGzL0HDJD_3i2UB8zKi34lBHIXT33G5YTeXsm4w2e0MW-bSjeGCw-mU4AkcAIIA7k4pLNRAhMC_Mz-Qplx7lucRM8eRgSyYi5UmztDuv77nUX7zBgn6xQTOvpCIuS1xue6BtmDGfF98i0P1Dzt506__nbP6VeMuvZIunHo27TGHtnrsnwc1zFAJ4mshe0l3WIScZ6sNZNMjEGvA","firebaseProjectId":"cazadeals-56767918-79225"}
+[debug] [2025-10-18T13:37:04.916Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2025-10-18T13:37:04.917Z] > authorizing via signed-in user (ricardobledaoficial@gmail.com)
+[debug] [2025-10-18T13:37:04.918Z] [iam] checking project cazadeals-56767918-79225 for permissions ["firebase.projects.get"]
+[debug] [2025-10-18T13:37:04.919Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:37:04.919Z] Checked if tokens are valid: true, expires at: 1760797322344
+[debug] [2025-10-18T13:37:04.919Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions [none]
+[debug] [2025-10-18T13:37:04.920Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions x-goog-quota-user=projects/cazadeals-56767918-79225
+[debug] [2025-10-18T13:37:04.920Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-18T13:37:05.537Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions 200
+[debug] [2025-10-18T13:37:05.537Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/cazadeals-56767918-79225:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-10-18T13:37:05.538Z] Emulator locator file path: /tmp/hub-cazadeals-56767918-79225.json
+[warn] ⚠  functions: Error when trying to check port 5000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5000 {"metadata":{"emulator":{"name":"functions"},"message":"Error when trying to check port 5000 on ::1: Error: listen EADDRNOTAVAIL: address not available ::1:5000"}}
+[warn] ⚠  functions: Port 5000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients. {"metadata":{"emulator":{"name":"functions"},"message":"Port 5000 is available on 127.0.0.1 but not ::1. This may cause issues with some clients."}}
+[warn] ⚠  functions: If you encounter connectivity issues, consider switching to a different port or explicitly specifying "host": "<ip address>" instead of hostname in firebase.json {"metadata":{"emulator":{"name":"functions"},"message":"If you encounter connectivity issues, consider switching to a different port or explicitly specifying \u001b[33m\"host\": \"<ip address>\"\u001b[39m instead of hostname in firebase.json"}}

@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext'; // IMPORTADO
 import { BrandProvider } from './context/BrandContext';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
@@ -28,9 +28,12 @@ const AdminUsersPage = () => <div className="p-8"><h1>Gestionar Usuarios (Próxi
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <BrandProvider>
-        <AppContent />
-      </BrandProvider>
+      {/* AÑADIDO EL AUTH PROVIDER QUE FALTABA */}
+      <AuthProvider>
+        <BrandProvider>
+          <AppContent />
+        </BrandProvider>
+      </AuthProvider>
     </Router>
   );
 }
@@ -85,17 +88,7 @@ const AppContent = () => {
             {!isAdminRoute && <Header />}
             <main className="flex-grow">
                 <Routes>
-                    {/* --- RUTA CORREGIDA (DE NUEVO) --- */}
-                    <Route path="/" element={
-                        <HomePage 
-                            deals={filteredDeals} 
-                            categories={categories} 
-                            marqueeDeals={marqueeDeals} 
-                            onDealClick={handleDealClick} 
-                            activeCategory={selectedCategory} 
-                            onCategorySelect={handleSelectCategory}
-                        />} 
-                    />
+                    <Route path="/" element={<HomePage />} />
                     <Route path="/tiendas" element={<StoresPage />} />
                     <Route path="/tiendas/:brandId" element={<BrandPage />} />
                     <Route path="/profile" element={<ProfilePage />} />

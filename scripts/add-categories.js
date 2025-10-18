@@ -1,30 +1,40 @@
+// scripts/add-categories.js
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getFirestore } = require('firebase-admin/firestore');
 
-const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+// IMPORTANTE: Reemplaza con la ruta a tu clave de servicio de Firebase
+const serviceAccount = require('../firebase-service-account.json');
 
-// Initialize with the correct project ID
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  projectId: 'cazadeals-56767918-79225'
+initializeApp({
+  credential: cert(serviceAccount)
 });
 
-const db = admin.firestore();
+const db = getFirestore();
 
-// Datos de las categorías a añadir
 const categoriesData = [
-  { name: 'Tech', icon: 'ComputerDesktopIcon' },
-  { name: 'Moda', icon: 'ShoppingBagIcon' },
-  { name: 'Comida', icon: 'CakeIcon' },
-  { name: 'Gaming', icon: 'PuzzlePieceIcon' },
-  { name: 'Libros', icon: 'BookOpenIcon' },
-  { name: 'Viajes', icon: 'GlobeAltIcon' }
+  { name: 'Comida', icon: '...url_o_svg_comida...' }, // Reemplazar con SVGs reales
+  { name: 'Gaming', icon: '...url_o_svg_gaming...' },
+  { name: 'Libros', icon: '...url_o_svg_libros...' },
+  { name: 'Moda', icon: '...url_o_svg_moda...' },
+  { name: 'Tech', icon: '...url_o_svg_tech...' },
+  { name: 'Viajes', icon: '...url_o_svg_viajes...' },
+  { name: 'Tiendas', icon: '...url_o_svg_tiendas...', special: true } // Añadimos un flag para el estilo especial
 ];
 
 async function addCategories() {
-  console.log('Iniciando la adición de categorías...');
+  const categoriesCollectionRef = db.collection('categories');
   const batch = db.batch();
 
-  const categoriesCollectionRef = db.collection('categories');
+  console.log('🔥 Empezando a añadir categorías...');
+
+  // Limpiar categorías existentes (opcional, pero recomendado para consistencia)
+  const snapshot = await categoriesCollectionRef.get();
+  if (!snapshot.empty) {
+    console.log('🗑️  Limpiando categorías antiguas...');
+    snapshot.docs.forEach(doc => {
+      batch.delete(doc.ref);
+    });
+  }
 
   categoriesData.forEach(category => {
     // Usamos el nombre de la categoría como ID del documento para evitar duplicados
