@@ -7,7 +7,7 @@ const MarqueeDeals = ({ deals }) => {
     return null;
   }
 
-  const duplicatedDeals = [...deals, ...deals];
+  const duplicatedDeals = [...deals, ...deals, ...deals];
 
   const slugify = (text) => {
     return text.toString().toLowerCase()
@@ -20,7 +20,7 @@ const MarqueeDeals = ({ deals }) => {
 
   return (
     <div className="relative w-full overflow-hidden py-4">
-      <div className="flex animate-marquee whitespace-nowrap">
+      <div className="flex animate-marquee whitespace-nowrap min-w-max">
         {duplicatedDeals.map((deal, index) => (
           <Link
             key={index}

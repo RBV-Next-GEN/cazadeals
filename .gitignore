@@ -1,5 +1,6 @@
 # Dependencias
 /node_modules
+/functions/node_modules
 
 # Archivos de build
 /build
@@ -34,6 +35,9 @@ yarn-error.log*
 # Archivos del sistema operativo
 .DS_Store
 Thumbs.db
+
+# Archivos de backup
+*.tar.gz
 
 # --- ARCHIVOS DE SECRETOS --
 # Ignora cualquier archivo JSON que contenga 'adminsdk' o 'serviceAccount'

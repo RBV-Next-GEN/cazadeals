@@ -43,7 +43,7 @@ const AppContent = () => {
     const isAdminRoute = location.pathname.startsWith('/admin');
 
     const [deals, setDeals] = useState([]);
-    const [categories, setCategories] = useState([]);
+    // const [categories, setCategories] = useState([]);
     const [marqueeDeals, setMarqueeDeals] = useState([]);
     const [selectedDeal, setSelectedDeal] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -61,27 +61,27 @@ const AppContent = () => {
 
                 const categoriesSnapshot = await getDocs(query(collection(db, 'categories'), orderBy('name')));
                 const categoryList = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setCategories(categoryList);
+                // setCategories(categoryList);
             } catch (error) { console.error("Error fetching data: ", error); }
         };
         fetchData();
     }, [isAdminRoute]);
     
-    const handleDealClick = (deal) => {
-        setSelectedDeal(deal);
-        setIsModalOpen(true);
-    };
+    // const handleDealClick = (deal) => {
+    //     setSelectedDeal(deal);
+    //     setIsModalOpen(true);
+    // };
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
         setSelectedDeal(null);
     };
     
-    const handleSelectCategory = (categoryName) => {
-        setSelectedCategory(categoryName);
-    };
+    // const handleSelectCategory = (categoryName) => {
+    //     setSelectedCategory(categoryName);
+    // };
 
-    const filteredDeals = selectedCategory === 'Todos' ? deals : deals.filter(deal => deal.category === selectedCategory);
+    // const filteredDeals = selectedCategory === 'Todos' ? deals : deals.filter(deal => deal.category === selectedCategory);
 
     return (
          <div className={`flex flex-col min-h-screen ${!isAdminRoute ? 'bg-gray-50 dark:bg-gray-900' : ''}`}>

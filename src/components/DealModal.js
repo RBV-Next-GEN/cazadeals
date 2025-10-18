@@ -66,7 +66,7 @@ const DealModal = ({ deal, onClose }) => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => setTimeout(onClose, 300)}
-                        className={`group w-full text-white font-semibold py-3 px-4 rounded-lg text-base flex items-center justify-center gap-2 animated-gradient-button ${buttonClass}`}
+                        className="group w-full text-white font-semibold py-3 px-4 rounded-lg text-base flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 transition-colors duration-300"
                     >
                         <span>Ir a la Tienda</span>
                         <ArrowTopRightOnSquareIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom'; // Importar Link
 
 // 1. Iconos SVG que coinciden con la imagen proporcionada
 const categoryIcons = {
@@ -49,16 +50,29 @@ const CategoryNav = ({ onSelect, activeCategory }) => {
                         textClass = 'text-white';
                     }
 
-                    return (
-                        <button
-                            key={name}
-                            onClick={() => onSelect(name)}
-                            className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center ${bgClass} ${textClass}`}
-                        >
-                            {categoryIcons[name]}
-                            <span className="text-sm font-bold">{name}</span>
-                        </button>
-                    );
+                    if (special) {
+                        return (
+                            <Link
+                                key={name}
+                                to="/tiendas" // Enlace a la página de tiendas
+                                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center ${bgClass} ${textClass}`}
+                            >
+                                {categoryIcons[name]}
+                                <span className="text-sm font-bold">{name}</span>
+                            </Link>
+                        );
+                    } else {
+                        return (
+                            <button
+                                key={name}
+                                onClick={() => onSelect(name)}
+                                className={`w-20 h-20 sm:w-24 sm:h-24 rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col items-center justify-center ${bgClass} ${textClass}`}
+                            >
+                                {categoryIcons[name]}
+                                <span className="text-sm font-bold">{name}</span>
+                            </button>
+                        );
+                    }
                 })}
             </div>
         </div>
