@@ -21,7 +21,7 @@ const LaunchBanner = () => (
         </p>
         <a 
             href="#deals-section" 
-            className="inline-block bg-gradient-to-r from-accent-orange-light to-accent-orange text-white font-bold py-3 px-8 rounded-full text-lg hover:opacity-90 transition-all duration-300 shadow-lg"
+            className="inline-block bg-white text-pink-600 font-bold py-3 px-8 rounded-full text-lg hover:bg-gray-200 transition-colors duration-300 shadow-lg"
         >
             Ver Ofertas de Hoy
         </a>

@@ -85,7 +85,7 @@ const AppContent = () => {
             {!isAdminRoute && <Header />}
             <main className="flex-grow">
                 <Routes>
-                    {/* --- RUTA CORREGIDA --- */}
+                    {/* --- RUTA CORREGIDA (DE NUEVO) --- */}
                     <Route path="/" element={
                         <HomePage 
                             deals={filteredDeals} 

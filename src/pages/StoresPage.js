@@ -3,7 +3,7 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import logoMap from '../assets/logo-map';
+import logoMap from '../assets/logo-map'; // Aseguramos que se usa el mapa central
 
 const Breadcrumbs = () => (
     <nav aria-label="Breadcrumb" className="mb-6 text-sm text-gray-500 dark:text-gray-400">
@@ -65,12 +65,11 @@ function StoresPage() {
                 const brandsCollection = await getDocs(collection(db, 'brands'));
                 const brandsData = brandsCollection.docs.map(doc => {
                     const data = doc.data();
-                    // Aseguramos que data.name existe antes de usarlo
                     const name = data.name || 'Sin Nombre';
                     return {
                         id: doc.id,
                         name: name,
-                        logoUrl: logoMap[name] || data.logoUrl,
+                        logoUrl: logoMap[name] || data.logoUrl, // Usa el mapa central
                         dealCount: dealCounts[name] || 0
                     }
                 });

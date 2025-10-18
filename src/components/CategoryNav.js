@@ -1,51 +1,69 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import * as HIcons from '@heroicons/react/24/outline';
 
-const CategoryNav = ({ categories, selectedCategory, onCategoryClick }) => {
-  const location = useLocation();
-
+const CategoryNav = ({ categories, onSelect, activeCategory }) => {
   if (!categories || categories.length === 0) {
     return null;
   }
 
   return (
-    <nav className="bg-primary-light dark:bg-primary-dark shadow-sm py-2 border-b border-t border-gray-200 dark:border-secondary-dark">
-      <div className="container mx-auto px-4 flex justify-center space-x-2 sm:space-x-3 md:space-x-4 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-        {categories.map((category) => {
-          const IconComponent = HIcons[category.icon] || HIcons.TagIcon;
-          const categoryName = category.name;
-
-          if (categoryName === 'Tiendas') {
-            const isSelected = location.pathname.startsWith('/tiendas');
-            const classNames = `p-3 rounded-lg transition-all duration-300 text-xs font-medium whitespace-nowrap flex flex-col items-center w-20 text-white ${isSelected ? 'bg-gradient-to-br from-purple-600 to-pink-600 shadow-lg ring-2 ring-white/50' : 'bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow'}`;
-
-            return (
-              <Link to="/tiendas" key={categoryName} className={classNames}>
-                <IconComponent className="h-6 w-6 mb-1" />
-                <span>{categoryName}</span>
-              </Link>
-            );
+    // Contenedor principal con la máscara de degradado para el efecto fade-out
+    <div className="relative py-4">
+      <div 
+        className="flex items-center space-x-4 overflow-x-auto pb-4 no-scrollbar"
+        style={{
+          maskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%)'
+        }}
+      >
+        {/* Botón "Todos" con estilo especial */}
+        <button
+          onClick={() => onSelect('Todos')}
+          className={`px-5 py-2 text-sm font-bold rounded-full transition-all duration-300 flex-shrink-0
+            ${activeCategory === 'Todos' 
+              ? 'bg-orange-500 text-white shadow-lg' 
+              : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-md hover:bg-gray-100 dark:hover:bg-gray-700'
+            }`
           }
+        >
+          Todos
+        </button>
 
-          const isSelected = selectedCategory === categoryName;
-          const classNames = `p-3 rounded-lg transition-colors duration-200 text-xs font-medium whitespace-nowrap flex flex-col items-center w-20 ${isSelected ? 'bg-accent-orange text-white shadow-md' : 'text-text-secondary-light dark:text-text-secondary-dark hover:bg-secondary-light dark:hover:bg-secondary-dark'}`;
-
-          return (
-            <button
-              key={categoryName}
-              onClick={() => onCategoryClick(categoryName)}
-              className={classNames}
-            >
-              <IconComponent className="h-6 w-6 mb-1" />
-              <span>{categoryName}</span>
-            </button>
-          );
-        })}
+        {/* Mapeo del resto de categorías */}
+        {categories.map((category) => (
+          <button
+            key={category.id}
+            onClick={() => onSelect(category.name)}
+            className={`px-5 py-2 text-sm font-semibold rounded-full transition-all duration-300 flex-shrink-0 border-b-2
+              ${activeCategory === category.name
+                ? 'bg-orange-500 text-white shadow-orange-500/50 shadow-lg border-transparent'
+                : 'bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-transparent hover:text-orange-500 hover:border-orange-500 hover:shadow-lg'
+              }`
+            }
+          >
+            {category.name}
+          </button>
+        ))}
       </div>
-    </nav>
+    </div>
   );
 };
+
+// Estilo para ocultar la barra de scroll
+const styles = `
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`;
+
+// Inyecta los estilos en el head del documento
+const styleSheet = document.createElement("style");
+styleSheet.type = "text/css";
+styleSheet.innerText = styles;
+document.head.appendChild(styleSheet);
 
 export default CategoryNav;
