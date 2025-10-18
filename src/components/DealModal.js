@@ -1,21 +1,21 @@
 
 import React, { useState } from 'react';
 import { ClipboardDocumentCheckIcon, XMarkIcon, ClipboardDocumentIcon, ArrowTopRightOnSquareIcon } from '@heroicons/react/24/solid';
-import { useBrands } from '../context/BrandContext'; // Importa el hook del nuevo contexto
+import { useBrands } from '../context/BrandContext';
 import logoMap from '../assets/logo-map';
 
 const DealModal = ({ deal, onClose }) => {
     const [isCopied, setIsCopied] = useState(false);
-    const { buildAffiliateUrl } = useBrands(); // Obtiene la función para construir URLs
+    const { buildAffiliateUrl } = useBrands();
 
     if (!deal) return null;
 
-    // Construye la URL final usando la lógica centralizada
     const finalUrl = buildAffiliateUrl(deal.link, deal.brand);
 
     const handleCopy = () => {
         if (deal.code && !isCopied) {
-            navigator.clipboard.writeText(deal.code);
+            // navigator.clipboard.writeText(deal.code); // <-- LÍNEA COMENTADA
+            console.warn("La copia al portapapeles está desactivada temporalmente.");
             setIsCopied(true);
             setTimeout(() => setIsCopied(false), 2500);
         }
@@ -23,10 +23,8 @@ const DealModal = ({ deal, onClose }) => {
 
     const isCodeDeal = deal.type === 'código';
     const logo = logoMap[deal.brand] || deal.logoUrl;
-    // ... (el resto de la lógica se mantiene igual)
     const formattedExpires = new Date(deal.expires).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
     const buttonClass = isCodeDeal ? 'gradient-pink' : 'gradient-orange';
-
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4" onClick={onClose}>
@@ -50,7 +48,7 @@ const DealModal = ({ deal, onClose }) => {
 
                     {isCodeDeal && (
                         <div className="mb-6">
-                            <p className="text-sm text-gray-500 mb-3">Copia el código y pégalo en la web de la tienda</p>
+                            <p className="text-sm text-gray-500 mb-3">Haz clic para copiar el código</p>
                             <button
                                 onClick={handleCopy}
                                 className={`w-full border-2 border-dashed rounded-lg p-4 flex items-center justify-center gap-3 transition-all duration-300 ${isCopied ? 'border-green-500 bg-green-50' : 'border-pink-300 bg-pink-100 hover:bg-pink-200'}`}
@@ -63,7 +61,6 @@ const DealModal = ({ deal, onClose }) => {
                         </div>
                     )}
 
-                    {/* El enlace ahora usa la URL final con el posible código de afiliado */}
                     <a
                         href={finalUrl}
                         target="_blank"
