@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -7,7 +6,8 @@ const MarqueeDeals = ({ deals }) => {
     return null;
   }
 
-  const duplicatedDeals = [...deals, ...deals, ...deals];
+  // Duplicamos los deals para crear un efecto infinito
+  const duplicatedDeals = [...deals, ...deals];
 
   const slugify = (text) => {
     return text.toString().toLowerCase()
@@ -19,19 +19,42 @@ const MarqueeDeals = ({ deals }) => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden py-4">
-      <div className="flex animate-marquee whitespace-nowrap min-w-max">
-        {duplicatedDeals.map((deal, index) => (
-          <Link
-            key={index}
-            to={`/tiendas/${slugify(deal.brand)}`}
-            className="bg-white dark:bg-tertiary-dark rounded-full px-5 py-2 mx-2 shadow-sm cursor-pointer transition-all duration-300 hover:scale-105 hover:bg-accent-cream dark:hover:bg-gray-700 block"
-          >
-            <span className="text-sm text-gray-800 dark:text-gray-200">
-              <span className="font-bold">{deal.brand}:</span> {deal.description}
+    <div className="relative w-full overflow-hidden bg-transparent">
+      <div className="flex animate-marquee">
+        {duplicatedDeals.map((deal, index) => {
+          const linkContent = (
+            <span className="text-sm text-gray-800 dark:text-gray-200 whitespace-nowrap">
+              <span className="font-bold text-orange-600 dark:text-orange-400">{deal.brand}:</span>{' '}
+              <span className="text-gray-600 dark:text-gray-300">{deal.description}</span>
             </span>
-          </Link>
-        ))}
+          );
+
+          const commonClasses = "flex-shrink-0 bg-white dark:bg-gray-800 rounded-full px-6 py-2 mx-3 my-4 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-105 border border-transparent hover:border-orange-200 dark:hover:border-orange-800";
+
+          if (deal.brandUrl) { // Si existe una URL de marca, usa un enlace externo
+            return (
+              <a
+                key={`${deal.id}-${index}`}
+                href={deal.brandUrl}
+                target="_blank" // Abre en una nueva pestaña
+                rel="noopener noreferrer" // Mejora la seguridad al abrir enlaces externos
+                className={commonClasses}
+              >
+                {linkContent}
+              </a>
+            );
+          } else { // Si no, usa el enlace interno existente
+            return (
+              <Link
+                key={`${deal.id}-${index}`}
+                to={`/tiendas/${slugify(deal.brand)}`}
+                className={commonClasses}
+              >
+                {linkContent}
+              </Link>
+            );
+          }
+        })}
       </div>
     </div>
   );

@@ -12,37 +12,66 @@ module.exports = {
         sans: ['Inter', ...fontFamily.sans],
       },
       colors: {
+        // Base
         'primary-light': '#FFFFFF',
-        'secondary-light': '#F0F2F5',
-        'text-primary-light': '#1A202C',
-        'text-secondary-light': '#718096',
+        'secondary-light': '#F5F7FA',
+        'background-light': '#F8FAFC',
+        'text-primary-light': '#0F172A',
+        'text-secondary-light': '#475569',
 
-        'primary-dark': '#1A202C',
-        'secondary-dark': '#2D3748',
-        'text-primary-dark': '#F7FAFC',
-        'text-secondary-dark': '#A0AEC0',
+        'primary-dark': '#0B1220',
+        'secondary-dark': '#0F1724',
+        'text-primary-dark': '#F8FAFC',
+        'text-secondary-dark': '#94A3B8',
 
+        // Premium palette
+        'petrol-blue': '#0F4C75',
+        'deep-navy': '#071B2F',
+        'golden': '#C79A2B',
+        'soft-gold': '#E6C77F',
+        'muted-slate': '#6B7280',
+
+        // Accents (kept for compatibility)
         'accent-orange-light': '#FFC83D',
         'accent-orange': '#FF8C00',
-        
-        'border-color': '#E2E8F0',
-        'background-light': '#F7FAFC',
+
+        // Utilities
+        'border-color': '#E6EEF8',
         'brand-pink': '#E53E85',
         'brand-green': '#38A169',
       },
+      boxShadow: {
+        'soft-md': '0 6px 18px rgba(12, 22, 31, 0.08)',
+        'soft-lg': '0 12px 30px rgba(12, 22, 31, 0.10)',
+        'inset-soft': 'inset 0 -6px 18px rgba(12,22,31,0.04)'
+      },
       animation: {
-        'marquee-slow': 'marquee 60s linear infinite',
-        'marquee': 'marquee 40s linear infinite',
+        'marquee': 'marquee 25s linear infinite',
         'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+        'micro-move': 'micro-move 6s ease-in-out infinite',
+        'gradient-x': 'gradient-x 4s ease-in-out infinite',
       },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(-100%)' }
+        },
+        marquee2: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(0%)' }
         },
         'fade-in-up': {
           '0%': { opacity: '0', transform: 'translateY(20px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'micro-move': {
+          '0%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-4px)' },
+          '100%': { transform: 'translateY(0px)' },
+        },
+        'gradient-x': {
+          '0%, 100%': { 'background-position': '0% 50%' },
+          '50%': { 'background-position': '100% 50%' },
         },
       },
       zIndex: {

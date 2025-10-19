@@ -14,26 +14,28 @@ const Newsletter = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
-      <h3 className="text-xl font-bold mb-2">¡No te pierdas nada!</h3>
-      <p className="text-gray-600 dark:text-gray-400 mb-4">Suscríbete para recibir las mejores ofertas directamente en tu correo.</p>
+    <div>
+      <h3 className="text-2xl font-bold text-white mb-2">📬 ¡No te pierdas nada!</h3>
+      <p className="text-white text-opacity-90 mb-6">Suscríbete para recibir las mejores ofertas directamente en tu correo.</p>
       {submitted ? (
-        <p className="text-green-500 font-bold">¡Gracias por suscribirte!</p>
+        <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-4">
+          <p className="text-white font-bold text-center">✨ ¡Gracias por suscribirte! ✨</p>
+        </div>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <input 
             type="email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Tu correo electrónico"
-            className="flex-grow p-3 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 focus:ring-2 focus:ring-orange-500 outline-none transition-shadow"
+            className="w-full p-4 rounded-xl bg-white bg-opacity-20 backdrop-blur-lg border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-75 focus:ring-2 focus:ring-white focus:ring-opacity-50 outline-none transition-all"
             required 
           />
           <button 
             type="submit"
-            className="bg-orange-500 text-white font-bold py-3 px-4 rounded-md hover:bg-orange-600 transition-colors duration-300 shadow-lg"
+            className="w-full bg-white text-orange-500 font-bold py-4 px-6 rounded-xl hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
-            Suscribirme
+            Suscribirme ahora
           </button>
         </form>
       )}

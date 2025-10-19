@@ -44,7 +44,7 @@ async function addLogosToDeals() {
     if (domain) {
       const logoUrl = `https://logo.clearbit.com/${domain}`;
       const dealRef = dealsRef.doc(doc.id);
-      batch.update(dealRef, { logoUrl: logoUrl });
+      batch.update(dealRef, { logoUrl: logoUrl, nameLowerCase: deal.store.toLowerCase() });
       console.log(`✅ Logo preparado para: ${deal.store}`);
     } else {
       console.log(`⚠️ No se encontró dominio para: ${deal.store}`);

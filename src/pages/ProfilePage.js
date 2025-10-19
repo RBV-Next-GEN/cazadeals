@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { motion } from 'framer-motion';
-import { ArrowLeftIcon, BellIcon, PaintBrushIcon, TagIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon, BookmarkIcon, UserGroupIcon, BellIcon, ClockIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useNavigate } from 'react-router-dom';
 
 // --- Sub-componentes para una UI más limpia ---
@@ -42,7 +42,7 @@ const BrandTag = ({ brand, onRemove }) => (
 // --- Componente Principal de la Página de Perfil ---
 
 function ProfilePage() {
-  const { currentUser } = useAuth();
+  const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
 
   const [settings, setSettings] = useState({
@@ -117,60 +117,81 @@ function ProfilePage() {
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-3xl mx-auto">
         <Link to="/" className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-orange-500 transition-colors mb-6 font-semibold">
           <ArrowLeftIcon className="h-5 w-5 mr-2" />
           Volver al inicio
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-1">
-             <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center border border-gray-200 dark:border-gray-700">
-                <img src={currentUser.photoURL} alt="Avatar" className="w-32 h-32 mx-auto rounded-full object-cover border-4 border-orange-500 mb-4"/>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{currentUser.displayName}</h1>
-                <p className="text-gray-500 dark:text-gray-400">{currentUser.email}</p>
-             </motion.div>
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6 sm:p-8 mb-8 relative">
+          {/* Botón cerrar sesión */}
+          <button onClick={logout} className="absolute top-6 right-6 bg-red-500 hover:bg-red-600 text-white font-bold px-5 py-2 rounded-lg flex items-center gap-2 shadow transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1" /></svg>
+            Cerrar Sesión
+          </button>
+          {/* Avatar y datos */}
+          <div className="flex flex-col items-center gap-2">
+            {currentUser.photoURL ? (
+              <img src={currentUser.photoURL} alt="Avatar" className="w-24 h-24 rounded-full object-cover border-4 border-orange-500 mb-2"/>
+            ) : (
+              <div className="w-24 h-24 rounded-full border-4 border-orange-500 mb-2 flex items-center justify-center bg-white dark:bg-gray-700 select-none">
+                <span className="text-4xl font-extrabold text-orange-500">
+                  {currentUser.displayName ? currentUser.displayName[0].toUpperCase() : '?'}
+                </span>
+              </div>
+            )}
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mt-2">{currentUser.displayName}</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-lg">{currentUser.email}</p>
           </div>
+        </div>
 
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="lg:col-span-2 space-y-8">
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold flex items-center mb-4 text-gray-800 dark:text-white"><BellIcon className="w-6 h-6 mr-3 text-orange-500"/>Notificaciones</h2>
-                <div className="space-y-4">
-                    <SettingsToggle label="Emails con Promociones" description="Recibe las mejores ofertas de la semana en tu correo." enabled={settings.receiveEmails} onChange={() => setSettings(p => ({...p, receiveEmails: !p.receiveEmails}))}/>
-                    <SettingsToggle label="Notificaciones Push" description="Recibe alertas instantáneas de ofertas urgentes (próximamente)." enabled={settings.receivePush} onChange={() => setSettings(p => ({...p, receivePush: !p.receivePush}))} />
-                </div>
+        {/* Tarjetas de opciones */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+          {/* Ofertas Guardadas */}
+          <div className="bg-red-50 border border-red-100 rounded-xl p-5 flex flex-col gap-2 shadow-sm">
+            <div className="flex items-center gap-2">
+              <BookmarkIcon className="w-6 h-6 text-red-500" />
+              <span className="font-bold text-lg text-red-600">Ofertas Guardadas</span>
             </div>
+            <p className="text-gray-600 text-sm">Aquí verás todas las ofertas que has marcado como favoritas para no perderte nada.</p>
+            <a className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">Ver mis ofertas guardadas (próximamente)</a>
+          </div>
+          {/* Mis Referidos */}
+          <div className="bg-green-50 border border-green-100 rounded-xl p-5 flex flex-col gap-2 shadow-sm">
+            <div className="flex items-center gap-2">
+              <UserGroupIcon className="w-6 h-6 text-green-500" />
+              <span className="font-bold text-lg text-green-600">Mis Referidos</span>
+            </div>
+            <p className="text-gray-600 text-sm">Invita a tus amigos y gana recompensas. ¡Consulta el estado de tus invitaciones!</p>
+            <a className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">Gestionar referidos (próximamente)</a>
+          </div>
+          {/* Notificaciones */}
+          <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-5 flex flex-col gap-2 shadow-sm">
+            <div className="flex items-center gap-2">
+              <BellIcon className="w-6 h-6 text-yellow-500" />
+              <span className="font-bold text-lg text-yellow-600">Notificaciones</span>
+            </div>
+            <p className="text-gray-600 text-sm">Personaliza las alertas para tus tiendas y categorías favoritas.</p>
+            <a className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">Ajustar preferencias (próximamente)</a>
+          </div>
+          {/* Historial de Copias */}
+          <div className="bg-blue-50 border border-blue-100 rounded-xl p-5 flex flex-col gap-2 shadow-sm">
+            <div className="flex items-center gap-2">
+              <ClockIcon className="w-6 h-6 text-blue-500" />
+              <span className="font-bold text-lg text-blue-600">Historial de Copias</span>
+            </div>
+            <p className="text-gray-600 text-sm">Revisa los códigos que has copiado recientemente.</p>
+            <a className="text-blue-600 font-semibold text-sm hover:underline cursor-pointer">Ver historial (próximamente)</a>
+          </div>
+        </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold flex items-center mb-4 text-gray-800 dark:text-white"><PaintBrushIcon className="w-6 h-6 mr-3 text-orange-500"/>Apariencia</h2>
-                <label htmlFor="theme" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tema Preferido</label>
-                <select id="theme" value={settings.theme} onChange={(e) => setSettings(p => ({...p, theme: e.target.value}))} className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm rounded-md">
-                    <option value="light">Claro</option>
-                    <option value="dark">Oscuro</option>
-                    <option value="system">Automático (del sistema)</option>
-                </select>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
-                <h2 className="text-2xl font-bold flex items-center mb-4 text-gray-800 dark:text-white"><TagIcon className="w-6 h-6 mr-3 text-orange-500"/>Mis Intereses</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Añade tus tiendas o marcas favoritas para recibir notificaciones personalizadas en el futuro.</p>
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {settings.favoriteBrands.map(brand => <BrandTag key={brand} brand={brand} onRemove={() => handleRemoveBrand(brand)}/>)}
-                </div>
-                <div className="flex gap-2">
-                    <input type="text" value={newBrand} onChange={(e) => setNewBrand(e.target.value)} placeholder="Ej: Nike, Amazon..." className="flex-grow px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"/>
-                    <button onClick={handleAddBrand} className="flex items-center bg-gray-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors"><PlusIcon className="w-5 h-5"/></button>
-                </div>
-            </div>
-
-            <div className="flex justify-end items-center">
-                {saveSuccess && <span className="text-green-500 mr-4 font-semibold">¡Preferencias guardadas!</span>}
-                <button onClick={handleSaveSettings} disabled={isSaving} className="bg-orange-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-orange-600 transition-colors disabled:bg-gray-400">
-                    {isSaving ? 'Guardando...' : 'Guardar Cambios'}
-                </button>
-            </div>
-          </motion.div>
+        {/* Bloque premium */}
+        <div className="rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 p-7 text-center shadow-lg mb-8">
+          <h3 className="text-2xl font-extrabold text-white mb-2">¡Desbloquea más con Premium!</h3>
+          <p className="text-white text-lg mb-4">Acceso anticipado a ofertas, alertas personalizadas y mucho más.</p>
+          <button className="bg-white text-purple-700 font-bold px-6 py-2 rounded-full shadow hover:bg-gray-100 transition-colors" disabled>
+            Más información (próximamente)
+          </button>
         </div>
       </div>
     </div>

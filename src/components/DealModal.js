@@ -24,7 +24,6 @@ const DealModal = ({ deal, onClose }) => {
     const isCodeDeal = deal.type === 'código';
     const logo = logoMap[deal.brand] || deal.logoUrl;
     const formattedExpires = new Date(deal.expires).toLocaleDateString('es-ES', { day: '2-digit', month: 'long', year: 'numeric' });
-    const buttonClass = isCodeDeal ? 'gradient-pink' : 'gradient-orange';
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex justify-center items-center z-50 p-4" onClick={onClose}>

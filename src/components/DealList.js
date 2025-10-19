@@ -7,13 +7,13 @@ const DealList = ({ deals, onCopyCode, onDealClick, copiedDealId }) => {
     <div className="mt-8">
       {/* CAMBIO: Colores de título actualizados */}
       <h2 className="text-2xl font-bold text-text-light dark:text-text-dark mb-6">Todas las Ofertas</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
         {deals.map((deal) => (
           <motion.div
             key={deal.id}
             // CAMBIO: Colores de tarjeta actualizados para modo claro y oscuro
             className="relative bg-primary-light dark:bg-secondary-dark rounded-lg shadow-md p-4 flex flex-col justify-between border border-secondary-light dark:border-tertiary-dark cursor-pointer
-                       hover:shadow-xl hover:border-accent-orange-light dark:hover:border-accent-orange-dark transition-all duration-300 ease-in-out"
+                       hover:shadow-xl hover:border-amber-400 transition-all duration-300 ease-in-out"
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => onDealClick(deal)}

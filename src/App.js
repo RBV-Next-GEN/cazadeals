@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';  // FIX LOOP: Agregado useRef para flag anti-loop
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext'; // IMPORTADO
+import { AuthProvider, useAuth } from './context/AuthContext'; // FIX DEALS: Import useAuth para check logged
 import { BrandProvider } from './context/BrandContext';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import { db } from './firebase';
@@ -25,6 +25,20 @@ import AdminScraperPage from './pages/admin/AdminScraperPage';
 const AdminMarqueePage = () => <div className="p-8"><h1>Gestionar Marquesina (Próximamente)</h1></div>;
 const AdminUsersPage = () => <div className="p-8"><h1>Gestionar Usuarios (Próximamente)</h1></div>;
 
+// FIX DEALS: Mock deals para fallback si Firebase falla – real-like para prototipo
+const mockDeals = [
+  { id: 'mock1', name: 'iPhone 15 Pro', price: 999, category: 'Tech' },
+  { id: 'mock2', name: 'AirPods Max', price: 549, category: 'Tech' },
+  { id: 'mock3', name: 'Libro BestSeller', price: 15, category: 'Libros' },
+  { id: 'mock4', name: 'Sneakers Nike', price: 120, category: 'Moda' },
+  { id: 'mock5', name: 'Cafetera Nespresso', price: 89, category: 'Comida' },
+  { id: 'mock6', name: 'PS5 Slim', price: 499, category: 'Gaming' },
+  { id: 'mock7', name: 'Kindle Paperwhite', price: 149, category: 'Libros' },
+  { id: 'mock8', name: 'Reloj Apple Watch', price: 429, category: 'Tech' },
+  { id: 'mock9', name: 'Bolso Louis Vuitton', price: 1500, category: 'Moda' },
+  { id: 'mock10', name: 'Viaje a Bali', price: 800, category: 'Viajes' },
+];
+
 function App() {
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
@@ -41,32 +55,68 @@ function App() {
 const AppContent = () => {
     const location = useLocation();
     const isAdminRoute = location.pathname.startsWith('/admin');
+    const { user } = useAuth();  // FIX DEALS: Check auth para guards
 
-    const [deals, setDeals] = useState([]);
-    // const [categories, setCategories] = useState([]);
-    const [marqueeDeals, setMarqueeDeals] = useState([]);
+    const [, setMarqueeDeals] = useState([]);
     const [selectedDeal, setSelectedDeal] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState('Todos');
 
+    const dataLoaded = useRef(false);  // FIX LOOP: Flag ref para trackear load sin re-render
+    const loggedWarningShown = useRef(false);  // FIX LOOP: Once-only warn si no logged
+    const [, setIsDataFetched] = useState(false); // Nuevo estado para controlar el fetch de datos
+
+    // FIX LOOP: useEffect 1 – Solo fetch data, depende de estables (no marqueeDeals)
     useEffect(() => {
         if (isAdminRoute) return;
         
-        const fetchData = async () => {
+        let retryTimer;  // Para retry backoff
+        
+        const fetchData = async (retryCount = 0) => {
             try {
+                // FIX DEALS: Guard auth – warn solo una vez
+                if (!user) {
+                    if (!loggedWarningShown.current) {
+                        console.warn('[Firebase Guard] User no logged – usando mock deals para prototipo.');
+                        loggedWarningShown.current = true;
+                    }
+                    setMarqueeDeals(mockDeals.slice(0, 10));
+                    setIsDataFetched(true);  // Marca loaded para IA effect
+                    return;
+                }
+
                 const dealsSnapshot = await getDocs(collection(db, 'deals'));
                 const dealList = dealsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setDeals(dealList);
+                if (dealList.length === 0) throw new Error('Colección deals vacía – agrega datos en Firebase Console.');
+                
                 setMarqueeDeals(dealList.slice(0, 10));
 
                 const categoriesSnapshot = await getDocs(query(collection(db, 'categories'), orderBy('name')));
-                const categoryList = categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                categoriesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 // setCategories(categoryList);
-            } catch (error) { console.error("Error fetching data: ", error); }
+
+                setIsDataFetched(true);  // Marca loaded – trigger IA sin loop
+
+            } catch (error) { 
+                console.error("[Firebase Error Details]", { code: error.code, message: error.message, retryCount });  // FIX DEALS: Logging detallado
+                
+                if (retryCount < 2) {  // FIX: Retry solo 2 veces para menos spam
+                    const backoff = Math.pow(2, retryCount) * 1000;  // 1s, 2s
+                    console.log(`Retry ${retryCount + 1}/2 en ${backoff}ms...`);
+                    retryTimer = setTimeout(() => fetchData(retryCount + 1), backoff);
+                    return;
+                }
+                
+                // Fallback final: Mock deals
+                console.warn('[Fallback] Usando mock deals – checa Firebase rules/conexión.');
+                setMarqueeDeals(mockDeals.slice(0, 10));
+                dataLoaded.current = true;  // FIX LOOP: Marca loaded incluso en fallback
+            }
         };
         fetchData();
-    }, [isAdminRoute]);
-    
+        
+        return () => clearTimeout(retryTimer);  // Cleanup retry
+    }, [isAdminRoute, user]);  // FIX LOOP: Solo deps estables – no marqueeDeals, cero loop
+
     // const handleDealClick = (deal) => {
     //     setSelectedDeal(deal);
     //     setIsModalOpen(true);
@@ -90,7 +140,7 @@ const AppContent = () => {
                 <Routes>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/tiendas" element={<StoresPage />} />
-                    <Route path="/tiendas/:brandId" element={<BrandPage />} />
+                    <Route path="/tiendas/:brandName" element={<BrandPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
 
                     {/* Rutas de Administración */}

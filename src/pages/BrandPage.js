@@ -131,7 +131,7 @@ const FaqSection = ({ brandName }) => (
 );
 
 function BrandPage() {
-    const { brandId } = useParams();
+    const { brandName } = useParams();
     const [brand, setBrand] = useState(null);
     const [deals, setDeals] = useState([]);
     const [filter, setFilter] = useState('Todas');
@@ -143,15 +143,16 @@ function BrandPage() {
         const fetchBrandData = async () => {
             setLoading(true);
             try {
-                const brandRef = doc(db, 'brands', brandId);
-                const brandSnap = await getDoc(brandRef);
+                const q = query(collection(db, 'brands'), where('nameLowerCase', '==', brandName.toLowerCase()));
+                const querySnapshot = await getDocs(q);
 
-                if (!brandSnap.exists()) {
+                if (querySnapshot.empty) {
                     setError('No se ha encontrado la marca especificada.');
                     setLoading(false);
                     return;
                 }
                 
+                const brandSnap = querySnapshot.docs[0];
                 const brandData = { id: brandSnap.id, ...brandSnap.data() };
                 setBrand(brandData);
 
@@ -168,7 +169,7 @@ function BrandPage() {
         };
 
         fetchBrandData();
-    }, [brandId]);
+    }, [brandName]);
     
     const codeDeals = deals.filter(d => d.type === 'código');
     const offerDeals = deals.filter(d => d.type === 'oferta');

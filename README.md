@@ -68,3 +68,23 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+# Principios Clave del Proyecto
+
+### Principios Clave
+- **DRY**: No repetir código
+- **SRP**: Una responsabilidad por componente
+- **Composición**: Preferir composición sobre herencia
+- **Funcional**: Controles UI conectados a lógica real
+
+---
+
+### 📋 Vista de Lista Mejorada
+- ✅ Tarjetas de cliente con diseño profesional y glassmorphism
+- ✅ Indicadores de estado con animaciones de pulso
+- ✅ Bordes de prioridad con colores distintivos (crítico: rojo, alto: naranja, etc.)
+- ✅ Barras de progreso de satisfacción con efectos shimmer
+- ✅ Integración con logos de Unsplash para realismo visual
+- ✅ Hover effects y transiciones suaves
+
+**Inspiración de diseño**: Mejores prácticas de UX/UI modernas

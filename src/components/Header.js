@@ -4,12 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Menu, Transition } from '@headlessui/react';
 import { useAuth } from '../context/AuthContext';
 import { MagnifyingGlassIcon, UserCircleIcon, ArrowLeftOnRectangleIcon, BackspaceIcon } from '@heroicons/react/24/solid';
+import LogoCazaDeals from '../assets/LogoCazaDeals';
 import { motion, AnimatePresence } from 'framer-motion';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 
 const Header = () => {
-  const { currentUser, signInWithGoogle, logout } = useAuth();
+  const { currentUser, loginWithGoogle, logout } = useAuth();
   const navigate = useNavigate();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -62,7 +63,7 @@ const Header = () => {
   };
   
   const handleSignIn = () => {
-    signInWithGoogle(navigate);
+    loginWithGoogle(navigate);
   };
   
   const handleBrandClick = () => {
@@ -76,10 +77,10 @@ const Header = () => {
         {/* Contenedor principal con posicionamiento relativo para alinear los elementos */}
         <div className="relative flex h-16 items-center justify-center">
           
-          {/* Logo - Posicionado a la izquierda */}
+          {/* Logo profesional - Posicionado a la izquierda */}
           <div className="absolute left-0 flex-shrink-0">
-            <Link to="/" className="text-3xl font-extrabold tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-orange-500">
-              CazaDeals
+            <Link to="/" className="flex items-center group focus:outline-none">
+              <LogoCazaDeals size={34} fontSize={22} className="transition-transform group-hover:scale-105" />
             </Link>
           </div>
 
@@ -140,19 +141,14 @@ const Header = () => {
             <div className="h-6 border-l border-gray-200 dark:border-gray-700"></div>
             {currentUser ? (
               <Menu as="div" className="relative">
-                <Menu.Button className="flex items-center p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <img src={currentUser.photoURL} alt="Perfil" className="w-8 h-8 rounded-full" />
-                </Menu.Button>
-                <Transition as={React.Fragment} enter="transition ease-out duration-100" enterFrom="opacity-0 scale-95" enterTo="opacity-100 scale-100" leave="transition ease-in duration-75" leaveFrom="opacity-100 scale-100" leaveTo="opacity-0 scale-95">
-                  <Menu.Items className="absolute right-0 mt-2 w-48 origin-top-right bg-white dark:bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                     <Menu.Item>
-                        {({ active }) => (<Link to="/profile" className={`${active && 'bg-gray-100 dark:bg-gray-700'} group flex items-center w-full px-2 py-2 text-sm text-gray-800 dark:text-gray-200`}> <UserCircleIcon className="w-5 h-5 mr-2" />Mi Perfil</Link>)}
-                      </Menu.Item>
-                      <Menu.Item>
-                        {({ active }) => (<button onClick={logout} className={`${active && 'bg-gray-100 dark:bg-gray-700'} group flex items-center w-full px-2 py-2 text-sm text-red-600 dark:text-red-400`}> <ArrowLeftOnRectangleIcon className="w-5 h-5 mr-2" />Cerrar sesión</button>)}
-                      </Menu.Item>
-                  </Menu.Items>
-                </Transition>
+                <Link to="/profile" className="flex items-center p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
+                  {currentUser.photoURL ? (
+                    <img src={currentUser.photoURL} alt="Perfil" className="w-8 h-8 rounded-full" />
+                  ) : (
+                    <UserCircleIcon className="w-8 h-8 text-gray-500" />
+                  )}
+                </Link>
+
               </Menu>
             ) : (
               <button onClick={handleSignIn} className="flex items-center p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">

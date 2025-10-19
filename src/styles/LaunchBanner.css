@@ -1,0 +1,29 @@
+.launch-banner-bg {
+    background: linear-gradient(135deg, #6B46C1, #B794F4);
+    position: relative;
+    overflow: hidden;
+}
+
+.launch-banner-bg::before {
+    content: 'Oferta';
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    font-size: 4rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.05);
+    transform: rotate(-15deg);
+    pointer-events: none;
+}
+
+.launch-banner-bg::after {
+    content: 'Descuento';
+    position: absolute;
+    bottom: 15%;
+    right: 5%;
+    font-size: 5rem;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 0.05);
+    transform: rotate(10deg);
+    pointer-events: none;
+}
