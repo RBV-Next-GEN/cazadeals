@@ -20,7 +20,17 @@ export const AuthProvider = ({ children }) => {
 
     const loginWithGoogle = () => {
         const provider = new GoogleAuthProvider();
-        return signInWithPopup(auth, provider);
+        // Envolvemos signInWithPopup en un .catch para manejar errores de forma controlada.
+        signInWithPopup(auth, provider)
+            .catch(error => {
+                // Si el error es porque el usuario cerró el popup, lo ignoramos silenciosamente.
+                // Esto previene el error "Uncaught" en la consola sin afectar al usuario.
+                if (error.code === 'auth/popup-closed-by-user') {
+                    return; // Simplemente no hacemos nada, que es lo esperado.
+                }
+                // Para cualquier otro error, sí lo mostramos en la consola para depuración.
+                console.error("Error de autenticación con Google:", error);
+            });
     };
 
     const logout = () => {
