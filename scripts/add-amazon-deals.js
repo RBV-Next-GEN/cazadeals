@@ -1,4 +1,3 @@
-add amazon deals
 // Este script se utiliza para añadir un lote de ofertas específicas de Amazon a la base de datos de Firestore.
 // Lee una lista de ofertas predefinidas, las formatea según el esquema de la base de datos y las inserta.
 
@@ -199,4 +198,3 @@ const addDealsToFirestore = async () => {
 
 // --- Ejecución del Script ---
 addDealsToFirestore();
-
